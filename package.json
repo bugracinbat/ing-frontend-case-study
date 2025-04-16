@@ -1,5 +1,5 @@
 {
-  "name": "@lit/lit-starter-js",
+  "name": "ing-frontend-case-study",
   "private": true,
   "version": "2.0.2",
   "description": "A simple web component",
@@ -21,7 +21,7 @@
     "docs:serve": "wds --root-dir=docs --node-resolve --watch",
     "analyze": "cem analyze --litelement --globs \"**/*.js\" --exclude docs",
     "analyze:watch": "cem analyze --litelement --globs \"**/*.js\" --exclude docs --watch",
-    "serve": "wds --watch",
+    "serve": "wds --config web-dev-server.config.js",
     "serve:prod": "MODE=prod npm run serve",
     "test": "npm run test:dev && npm run test:prod",
     "test:dev": "wtr",
@@ -39,7 +39,11 @@
   "author": "Google LLC",
   "license": "BSD-3-Clause",
   "dependencies": {
-    "lit": "^3.2.0"
+    "@reduxjs/toolkit": "^2.6.1",
+    "@vaadin/router": "^2.0.0",
+    "lit": "^3.2.0",
+    "react-redux": "^9.2.0",
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
     "@11ty/eleventy": "^1.0.1",

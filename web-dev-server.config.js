@@ -12,8 +12,15 @@ if (!['dev', 'prod'].includes(mode)) {
 }
 
 export default {
-  nodeResolve: {exportConditions: mode === 'dev' ? ['development'] : []},
-  preserveSymlinks: true,
+  rootDir: 'src',
+  nodeResolve: true,
+  watch: true,
+  appIndex: 'index.html',
+  open: true,
+  historyApiFallback: {
+    index: 'index.html',
+    disableDotRule: true
+  },
   plugins: [
     legacyPlugin({
       polyfills: {
@@ -22,4 +29,15 @@ export default {
       },
     }),
   ],
+  middleware: [
+    function(context, next) {
+      if (context.path === '/node_modules/@reduxjs/toolkit/dist/redux-toolkit.esm.js') {
+        context.body = `
+          window.process = { env: { NODE_ENV: 'development' } };
+          ${context.body}
+        `;
+      }
+      return next();
+    }
+  ]
 };
