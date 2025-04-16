@@ -1,20 +1,33 @@
 import {createSlice, configureStore} from '@reduxjs/toolkit';
 import { v4 as uuidv4 } from 'uuid';
+import { faker } from '@faker-js/faker';
 
 // Function to generate multiple employees with unique IDs
 const generateEmployees = (count) => {
+  const departments = ['Engineering', 'Marketing', 'Sales', 'HR', 'Finance', 'Operations', 'IT', 'Customer Service'];
+  const positions = ['Junior', 'Medior', 'Senior', 'Lead', 'Manager', 'Director', 'VP'];
+  
   const employees = [];
   for (let i = 0; i < count; i++) {
+    const firstName = faker.person.firstName();
+    const lastName = faker.person.lastName();
+    const email = faker.internet.email({ firstName, lastName });
+    const phoneNumber = faker.phone.number();
+    const dateOfEmployment = faker.date.past({ years: 5 }).toISOString().split('T')[0];
+    const dateOfBirth = faker.date.birthdate({ min: 18, max: 65, mode: 'age' }).toISOString().split('T')[0];
+    const department = faker.helpers.arrayElement(departments);
+    const position = faker.helpers.arrayElement(positions);
+
     employees.push({
       id: `emp-${i + 1}`,
-      firstName: 'John',
-      lastName: 'Doe',
-      email: 'john.doe@example.com',
-      phoneNumber: '555-123-4567',
-      dateOfEmployment: '2020-01-01',
-      dateOfBirth: '1990-01-01',
-      department: 'Engineering',
-      position: 'Senior Developer'
+      firstName,
+      lastName,
+      email,
+      phoneNumber,
+      dateOfEmployment,
+      dateOfBirth,
+      department,
+      position
     });
   }
   return employees;

@@ -39,6 +39,7 @@
   "author": "Google LLC",
   "license": "BSD-3-Clause",
   "dependencies": {
+    "@faker-js/faker": "^9.7.0",
     "@reduxjs/toolkit": "^2.6.1",
     "@vaadin/router": "^2.0.0",
     "lit": "^3.2.0",
