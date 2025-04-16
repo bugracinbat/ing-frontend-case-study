@@ -20,7 +20,7 @@ class EmployeeList extends LitElement {
   static styles = css`
     .container {
       max-width: 1200px;
-      margin: auto;
+      margin: 80px auto 20px;
       padding: 16px;
       background-color: white;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
@@ -36,6 +36,7 @@ class EmployeeList extends LitElement {
       display: flex;
       gap: 8px;
       margin-bottom: 16px;
+      justify-content: flex-end;
     }
 
     .view-toggle button {
@@ -199,8 +200,11 @@ class EmployeeList extends LitElement {
     // Subscribe to store updates
     this.unsubscribe = store.subscribe(() => {
       const newState = store.getState();
-      this.employees = Array.isArray(newState.employees) ? newState.employees : [];
-      this.requestUpdate();
+      const newEmployees = Array.isArray(newState.employees) ? newState.employees : [];
+      if (JSON.stringify(this.employees) !== JSON.stringify(newEmployees)) {
+        this.employees = newEmployees;
+        this.requestUpdate();
+      }
     });
   }
 
@@ -376,19 +380,9 @@ class EmployeeList extends LitElement {
         
         <div class="view-toggle">
           <button 
-            class=${this.viewMode === 'table' ? 'active' : ''}
-            @click=${() => this.handleViewModeChange('table')}
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-              <line x1="3" y1="9" x2="21" y2="9"></line>
-              <line x1="9" y1="21" x2="9" y2="9"></line>
-            </svg>
-            ${LocalizationService.getTranslation('employeeList.tableView')}
-          </button>
-          <button 
             class=${this.viewMode === 'list' ? 'active' : ''}
             @click=${() => this.handleViewModeChange('list')}
+            title=${LocalizationService.getTranslation('employeeList.listView')}
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <line x1="8" y1="6" x2="21" y2="6"></line>
@@ -398,7 +392,17 @@ class EmployeeList extends LitElement {
               <line x1="3" y1="12" x2="3.01" y2="12"></line>
               <line x1="3" y1="18" x2="3.01" y2="18"></line>
             </svg>
-            ${LocalizationService.getTranslation('employeeList.listView')}
+          </button>
+          <button 
+            class=${this.viewMode === 'table' ? 'active' : ''}
+            @click=${() => this.handleViewModeChange('table')}
+            title=${LocalizationService.getTranslation('employeeList.tableView')}
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="3" y1="9" x2="21" y2="9"></line>
+              <line x1="9" y1="21" x2="9" y2="9"></line>
+            </svg>
           </button>
         </div>
 
