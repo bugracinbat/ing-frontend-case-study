@@ -12,7 +12,7 @@ const generateEmployees = (count) => {
     const firstName = faker.person.firstName();
     const lastName = faker.person.lastName();
     const email = faker.internet.email({ firstName, lastName });
-    const phoneNumber = faker.phone.number();
+    const phoneNumber = faker.phone.number({style: 'national'});
     const dateOfEmployment = faker.date.past({ years: 5 }).toISOString().split('T')[0];
     const dateOfBirth = faker.date.birthdate({ min: 18, max: 65, mode: 'age' }).toISOString().split('T')[0];
     const department = faker.helpers.arrayElement(departments);
@@ -44,7 +44,6 @@ const employeesSlice = createSlice({
   reducers: {
     addEmployee: (state, action) => {
       state.employees.push(action.payload);
-      localStorage.setItem('employees', JSON.stringify(state.employees));
     },
     editEmployee: (state, action) => {
       const index = state.employees.findIndex(emp => emp.id === action.payload.id);
@@ -52,12 +51,10 @@ const employeesSlice = createSlice({
         const newEmployees = [...state.employees];
         newEmployees[index] = { ...action.payload };
         state.employees = newEmployees;
-        localStorage.setItem('employees', JSON.stringify(state.employees));
       }
     },
     deleteEmployee: (state, action) => {
       state.employees = state.employees.filter(emp => emp.id !== action.payload);
-      localStorage.setItem('employees', JSON.stringify(state.employees));
     }
   }
 });
