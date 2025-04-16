@@ -4,8 +4,8 @@ import { faker } from '@faker-js/faker';
 
 // Function to generate multiple employees with unique IDs
 const generateEmployees = (count) => {
-  const departments = ['Engineering', 'Marketing', 'Sales', 'HR', 'Finance', 'Operations', 'IT', 'Customer Service'];
-  const positions = ['Junior', 'Medior', 'Senior', 'Lead', 'Manager', 'Director', 'VP'];
+  const departments = ['Analytics', 'Tech'];
+  const positions = ['Junior', 'Medior', 'Senior'];
   
   const employees = [];
   for (let i = 0; i < count; i++) {
