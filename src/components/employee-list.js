@@ -280,6 +280,9 @@ class EmployeeList extends LitElement {
             <th>${LocalizationService.getTranslation('employeeList.firstName')}</th>
             <th>${LocalizationService.getTranslation('employeeList.lastName')}</th>
             <th>${LocalizationService.getTranslation('employeeList.email')}</th>
+            <th>${LocalizationService.getTranslation('employeeList.dateOfEmployment')}</th>
+            <th>${LocalizationService.getTranslation('employeeList.dateOfBirth')}</th>
+            <th>${LocalizationService.getTranslation('employeeList.phoneNumber')}</th>
             <th>${LocalizationService.getTranslation('employeeList.department')}</th>
             <th>${LocalizationService.getTranslation('employeeList.position')}</th>
             <th>${LocalizationService.getTranslation('employeeList.actions')}</th>
@@ -290,6 +293,9 @@ class EmployeeList extends LitElement {
             <tr>
               <td>${emp.firstName}</td>
               <td>${emp.lastName}</td>
+              <td>${emp.dateOfEmployment}</td>
+              <td>${emp.dateOfBirth}</td>
+              <td>${emp.phoneNumber}</td>
               <td>${emp.email}</td>
               <td>${emp.department}</td>
               <td>${emp.position}</td>
@@ -335,6 +341,19 @@ class EmployeeList extends LitElement {
                 <span class="list-item-field-label">${LocalizationService.getTranslation('employeeList.lastName')}:</span>
                 <span>${emp.lastName}</span>
               </div>
+              <div class="list-item-field">
+                <span class="list-item-field-label">${LocalizationService.getTranslation('employeeList.dateOfEmployment')}:</span>
+                <span>${emp.dateOfEmployment}</span>
+              </div>
+              <div class="list-item-field">
+                <span class="list-item-field-label">${LocalizationService.getTranslation('employeeList.dateOfBirth')}:</span>
+                <span>${emp.dateOfBirth}</span>
+              </div>
+              <div class="list-item-field">
+                <span class="list-item-field-label">${LocalizationService.getTranslation('employeeList.phoneNumber')}:</span>
+                <span>${emp.phoneNumber}</span>
+              </div>
+
               <div class="list-item-field">
                 <span class="list-item-field-label">${LocalizationService.getTranslation('employeeList.email')}:</span>
                 <span>${emp.email}</span>
