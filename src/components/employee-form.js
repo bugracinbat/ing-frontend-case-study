@@ -3,6 +3,7 @@ import { store } from '../state/store.js';
 import { addEmployee, editEmployee } from '../state/store.js';
 import { v4 as uuidv4 } from 'uuid';
 import { LocalizationService } from '../services/localization.js';
+import { Router } from '@vaadin/router';
 
 class EmployeeForm extends LitElement {
   static get properties() {
@@ -214,7 +215,7 @@ class EmployeeForm extends LitElement {
       store.dispatch(addEmployee({ ...updated, id: uuidv4() }));
     }
 
-    window.location.href = '/';
+    Router.go('/');
   }
 
   validate(data) {
