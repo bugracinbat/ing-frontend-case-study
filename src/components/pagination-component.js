@@ -47,6 +47,19 @@ class PaginationComponent extends LitElement {
       padding: 8px 12px;
       color: #666;
     }
+
+    .pagination-container {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .nav-button {
+      padding: 8px;
+      min-width: 32px;
+      font-size: 16px;
+      line-height: 1;
+    }
   `;
 
   constructor() {
@@ -82,26 +95,72 @@ class PaginationComponent extends LitElement {
   }
 
   render() {
+    const pages = [];
+    const maxVisiblePages = 5;
+    const halfVisible = Math.floor(maxVisiblePages / 2);
+
+    pages.push(1);
+
+    let startPage = Math.max(2, this.currentPage - halfVisible);
+    let endPage = Math.min(this.totalPages - 1, this.currentPage + halfVisible);
+
+    if (this.currentPage <= halfVisible + 1) {
+      endPage = Math.min(this.totalPages - 1, maxVisiblePages);
+    }
+
+    if (this.currentPage >= this.totalPages - halfVisible) {
+      startPage = Math.max(2, this.totalPages - maxVisiblePages + 1);
+    }
+
+    if (startPage > 2) {
+      pages.push('...');
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(i);
+    }
+
+    if (endPage < this.totalPages - 1) {
+      pages.push('...');
+    }
+
+    if (this.totalPages > 1) {
+      pages.push(this.totalPages);
+    }
+
     return html`
       <div class="pagination">
         <button 
+          class="page-button nav-button"
           @click=${() => this.handlePageChange(this.currentPage - 1)}
           ?disabled=${this.currentPage === 1}
+          aria-label="Previous page"
         >
-          ${LocalizationService.getTranslation('pagination.previous')}
+          ‹
         </button>
         
-        <span class="page-info">
-          ${LocalizationService.getTranslation('pagination.page')} ${this.currentPage} 
-          ${LocalizationService.getTranslation('pagination.of')} 
-          ${this.totalPages}
-        </span>
+        <div class="pagination-container">
+          ${pages.map(page => 
+            page === '...' 
+              ? html`<span class="ellipsis">...</span>`
+              : html`
+                <button 
+                  class="page-button ${this.currentPage === page ? 'selected' : ''}"
+                  @click=${() => this.handlePageChange(page)}
+                >
+                  ${page}
+                </button>
+              `
+          )}
+        </div>
         
         <button 
+          class="page-button nav-button"
           @click=${() => this.handlePageChange(this.currentPage + 1)}
           ?disabled=${this.currentPage === this.totalPages}
+          aria-label="Next page"
         >
-          ${LocalizationService.getTranslation('pagination.next')}
+          ›
         </button>
       </div>
     `;
