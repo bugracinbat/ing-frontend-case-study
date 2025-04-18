@@ -4,10 +4,7 @@ import { deleteEmployee } from '../state/store.js';
 import './confirm-dialog.js';
 import './pagination-component.js';
 import { LocalizationService } from '../services/localization.js';
-import editIcon from '../icons/edit-icon.svg';
-import deleteIcon from '../icons/delete-icon.svg';
-import listViewIcon from '../icons/list-view-icon.svg';
-import tableViewIcon from '../icons/table-view-icon.svg';
+import './icon-component.js';
 
 class EmployeeList extends LitElement {
   static get properties() {
@@ -306,10 +303,10 @@ class EmployeeList extends LitElement {
               <td>
                 <div class="actions">
                   <a href="/edit/${emp.id}" class="action-button edit-button">
-                    <img src=${editIcon} alt="Edit" width="20" height="20" />
+                    <icon-component name="edit" size="20"></icon-component>
                   </a>
                   <button class="action-button delete-button" @click=${() => this.handleDelete(emp.id)}>
-                    <img src=${deleteIcon} alt="Delete" width="20" height="20" />
+                    <icon-component name="delete" size="20"></icon-component>
                   </button>
                 </div>
               </td>
@@ -367,10 +364,10 @@ class EmployeeList extends LitElement {
             </div>
             <div class="actions">
               <a href="/edit/${emp.id}" class="action-button edit-button">
-                <img src=${editIcon} alt="Edit" width="20" height="20" />
+                <icon-component name="edit" size="20"></icon-component>
               </a>
               <button class="action-button delete-button" @click=${() => this.handleDelete(emp.id)}>
-                <img src=${deleteIcon} alt="Delete" width="20" height="20" />
+                <icon-component name="delete" size="20"></icon-component>
               </button>
             </div>
           </div>
@@ -395,14 +392,14 @@ class EmployeeList extends LitElement {
             @click=${() => this.handleViewModeChange('list')}
             title=${LocalizationService.getTranslation('employeeList.listView')}
           >
-            <img src=${listViewIcon} alt="List View" width="16" height="16" />
+            <icon-component name="list" size="16"></icon-component>
           </button>
           <button 
             class=${this.viewMode === 'table' ? 'active' : ''}
             @click=${() => this.handleViewModeChange('table')}
             title=${LocalizationService.getTranslation('employeeList.tableView')}
           >
-            <img src=${tableViewIcon} alt="Table View" width="16" height="16" />
+            <icon-component name="table" size="16"></icon-component>
           </button>
         </div>
 

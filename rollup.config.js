@@ -8,7 +8,6 @@ import summary from 'rollup-plugin-summary';
 import terser from '@rollup/plugin-terser';
 import resolve from '@rollup/plugin-node-resolve';
 import replace from '@rollup/plugin-replace';
-import svg from 'rollup-plugin-svg';
 
 export default {
   input: 'src/index.js',
@@ -28,7 +27,6 @@ export default {
       'Reflect.decorate': 'undefined',
       'process.env.NODE_ENV': JSON.stringify('production')
     }),
-    svg(),
     resolve(),
     /**
      * This minification setup serves the static site generation.

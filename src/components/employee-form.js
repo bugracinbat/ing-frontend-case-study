@@ -4,7 +4,7 @@ import { addEmployee, editEmployee } from '../state/store.js';
 import { v4 as uuidv4 } from 'uuid';
 import { LocalizationService } from '../services/localization.js';
 import { Router } from '@vaadin/router';
-import backArrowIcon from '../icons/back-arrow-icon.svg';
+import './icon-component.js';
 
 class EmployeeForm extends LitElement {
   static get properties() {
@@ -238,97 +238,112 @@ class EmployeeForm extends LitElement {
   render() {
     return html`
       <div class="container">
-        <a href="/" class="back-button">
-          <img src=${backArrowIcon} alt="Back" width="16" height="16" />
-          ${LocalizationService.getTranslation('employeeForm.back')}
-        </a>
-        <h1>${this.isEditMode 
-          ? LocalizationService.getTranslation('employeeForm.editTitle')
-          : LocalizationService.getTranslation('employeeForm.addTitle')}
-        </h1>
+        <div class="header">
+          <a href="/" class="back-button">
+            <icon-component name="back" size="24"></icon-component>
+          </a>
+          <h1>${this.isEditMode ? LocalizationService.getTranslation('employeeForm.editTitle') : LocalizationService.getTranslation('employeeForm.addTitle')}</h1>
+        </div>
+
         <form @submit=${this.handleSubmit}>
           <div class="form-group">
-            <label>${LocalizationService.getTranslation('employeeForm.firstName')}</label>
+            <label for="firstName">${LocalizationService.getTranslation('employeeForm.firstName')}</label>
             <input 
+              type="text" 
+              id="firstName" 
               name="firstName" 
-              .value=${this.employee.firstName} 
-              required 
-              placeholder=${LocalizationService.getTranslation('employeeForm.firstNamePlaceholder')}
-            />
+              .value=${this.employee.firstName}
+              @input=${this.handleInput}
+              required
+            >
           </div>
 
           <div class="form-group">
-            <label>${LocalizationService.getTranslation('employeeForm.lastName')}</label>
+            <label for="lastName">${LocalizationService.getTranslation('employeeForm.lastName')}</label>
             <input 
+              type="text" 
+              id="lastName" 
               name="lastName" 
-              .value=${this.employee.lastName} 
-              required 
-              placeholder=${LocalizationService.getTranslation('employeeForm.lastNamePlaceholder')}
-            />
+              .value=${this.employee.lastName}
+              @input=${this.handleInput}
+              required
+            >
           </div>
 
           <div class="form-group">
-            <label>${LocalizationService.getTranslation('employeeForm.dateOfEmployment')}</label>
+            <label for="email">${LocalizationService.getTranslation('employeeForm.email')}</label>
             <input 
-              name="dateOfEmployment" 
-              type="date" 
-              .value=${this.employee.dateOfEmployment} 
-              required 
-            />
-          </div>
-
-          <div class="form-group">
-            <label>${LocalizationService.getTranslation('employeeForm.dateOfBirth')}</label>
-            <input 
-              name="dateOfBirth" 
-              type="date" 
-              .value=${this.employee.dateOfBirth} 
-              required 
-            />
-          </div>
-
-          <div class="form-group">
-            <label>${LocalizationService.getTranslation('employeeForm.phoneNumber')}</label>
-            <input 
-              name="phoneNumber" 
-              .value=${this.employee.phoneNumber} 
-              required 
-              placeholder=${LocalizationService.getTranslation('employeeForm.phoneNumberPlaceholder')}
-            />
-          </div>
-
-          <div class="form-group">
-            <label>${LocalizationService.getTranslation('employeeForm.email')}</label>
-            <input 
-              name="email" 
               type="email" 
-              .value=${this.employee.email} 
-              required 
-              placeholder=${LocalizationService.getTranslation('employeeForm.emailPlaceholder')}
-            />
+              id="email" 
+              name="email" 
+              .value=${this.employee.email}
+              @input=${this.handleInput}
+              required
+            >
           </div>
 
           <div class="form-group">
-            <label>${LocalizationService.getTranslation('employeeForm.department')}</label>
-            <select name="department" .value=${this.employee.department}>
-              <option value="Analytics">${LocalizationService.getTranslation('employeeForm.analytics')}</option>
-              <option value="Tech">${LocalizationService.getTranslation('employeeForm.tech')}</option>
-            </select>
+            <label for="dateOfEmployment">${LocalizationService.getTranslation('employeeForm.dateOfEmployment')}</label>
+            <input 
+              type="date" 
+              id="dateOfEmployment" 
+              name="dateOfEmployment" 
+              .value=${this.employee.dateOfEmployment}
+              @input=${this.handleInput}
+              required
+            >
           </div>
 
           <div class="form-group">
-            <label>${LocalizationService.getTranslation('employeeForm.position')}</label>
-            <select name="position" .value=${this.employee.position}>
-              <option value="Junior">${LocalizationService.getTranslation('employeeForm.junior')}</option>
-              <option value="Medior">${LocalizationService.getTranslation('employeeForm.medior')}</option>
-              <option value="Senior">${LocalizationService.getTranslation('employeeForm.senior')}</option>
-            </select>
+            <label for="dateOfBirth">${LocalizationService.getTranslation('employeeForm.dateOfBirth')}</label>
+            <input 
+              type="date" 
+              id="dateOfBirth" 
+              name="dateOfBirth" 
+              .value=${this.employee.dateOfBirth}
+              @input=${this.handleInput}
+              required
+            >
           </div>
 
-          <button type="submit">
-            ${this.isEditMode ? 
-              LocalizationService.getTranslation('employeeForm.update') : 
-              LocalizationService.getTranslation('employeeForm.save')}
+          <div class="form-group">
+            <label for="phoneNumber">${LocalizationService.getTranslation('employeeForm.phoneNumber')}</label>
+            <input 
+              type="tel" 
+              id="phoneNumber" 
+              name="phoneNumber" 
+              .value=${this.employee.phoneNumber}
+              @input=${this.handleInput}
+              required
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="department">${LocalizationService.getTranslation('employeeForm.department')}</label>
+            <input 
+              type="text" 
+              id="department" 
+              name="department" 
+              .value=${this.employee.department}
+              @input=${this.handleInput}
+              required
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="position">${LocalizationService.getTranslation('employeeForm.position')}</label>
+            <input 
+              type="text" 
+              id="position" 
+              name="position" 
+              .value=${this.employee.position}
+              @input=${this.handleInput}
+              required
+            >
+          </div>
+
+          <button type="submit" class="submit-button">
+            ${this.isEditMode ? LocalizationService.getTranslation('employeeForm.updateButton') : LocalizationService.getTranslation('employeeForm.addButton')}
           </button>
         </form>
       </div>
