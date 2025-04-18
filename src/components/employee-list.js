@@ -28,27 +28,34 @@ class EmployeeList extends LitElement {
       border-radius: 8px;
     }
 
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
     h1 {
       color: #ff6200;
-      margin-bottom: 24px;
+      margin: 0;
     }
 
     .view-toggle {
       display: flex;
       gap: 8px;
-      margin-bottom: 16px;
-      justify-content: flex-end;
     }
 
     .view-toggle button {
-      padding: 8px 16px;
+      padding: 8px;
       border: 1px solid #ddd;
       background: white;
       cursor: pointer;
       border-radius: 4px;
       display: flex;
       align-items: center;
-      gap: 8px;
+      justify-content: center;
+      min-width: 36px;
+      height: 36px;
     }
 
     .view-toggle button.active {
@@ -73,22 +80,32 @@ class EmployeeList extends LitElement {
     }
 
     /* Table View Styles */
+    .table-container {
+      width: 100%;
+      overflow-x: auto;
+      margin-bottom: 16px;
+      -webkit-overflow-scrolling: touch;
+    }
+
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-bottom: 16px;
+      min-width: 800px;
     }
 
     th, td {
       padding: 12px;
       border: 1px solid #ddd;
       text-align: left;
+      white-space: nowrap;
     }
 
     th {
       background-color: #f5f5f5;
       color: #ff6200;
       font-weight: bold;
+      position: sticky;
+      top: 0;
     }
 
     /* List View Styles */
@@ -169,6 +186,17 @@ class EmployeeList extends LitElement {
     @media (max-width: 768px) {
       .container {
         padding: 8px;
+        margin: 60px 0 20px;
+      }
+
+      .table-container {
+        margin: 0 -8px;
+        padding: 0 8px;
+      }
+
+      th, td {
+        padding: 8px;
+        font-size: 14px;
       }
 
       .list-item {
@@ -287,50 +315,52 @@ class EmployeeList extends LitElement {
 
   renderTableView() {
     return html`
-      <table>
-        <thead>
-          <tr>
-            <th>${LocalizationService.getTranslation('employeeList.firstName')}</th>
-            <th>${LocalizationService.getTranslation('employeeList.lastName')}</th>
-            <th>${LocalizationService.getTranslation('employeeList.email')}</th>
-            <th>${LocalizationService.getTranslation('employeeList.dateOfEmployment')}</th>
-            <th>${LocalizationService.getTranslation('employeeList.dateOfBirth')}</th>
-            <th>${LocalizationService.getTranslation('employeeList.phoneNumber')}</th>
-            <th>${LocalizationService.getTranslation('employeeList.department')}</th>
-            <th>${LocalizationService.getTranslation('employeeList.position')}</th>
-            <th>${LocalizationService.getTranslation('employeeList.actions')}</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${this.paginatedEmployees.map(emp => html`
+      <div class="table-container">
+        <table>
+          <thead>
             <tr>
-              <td>${emp.firstName}</td>
-              <td>${emp.lastName}</td>
-              <td>${emp.dateOfEmployment}</td>
-              <td>${emp.dateOfBirth}</td>
-              <td>${emp.phoneNumber}</td>
-              <td>${emp.email}</td>
-              <td>${emp.department}</td>
-              <td>${emp.position}</td>
-              <td>
-                <div class="actions">
-                  <a href="/edit/${emp.id}" class="action-button edit-button">
-                    <icon-component name="edit" size="20"></icon-component>
-                  </a>
-                  <button class="action-button delete-button" @click=${() => this.handleDelete(emp.id)}>
-                    <icon-component name="delete" size="20"></icon-component>
-                  </button>
-                </div>
-              </td>
+              <th>${LocalizationService.getTranslation('employeeList.firstName')}</th>
+              <th>${LocalizationService.getTranslation('employeeList.lastName')}</th>
+              <th>${LocalizationService.getTranslation('employeeList.email')}</th>
+              <th>${LocalizationService.getTranslation('employeeList.dateOfEmployment')}</th>
+              <th>${LocalizationService.getTranslation('employeeList.dateOfBirth')}</th>
+              <th>${LocalizationService.getTranslation('employeeList.phoneNumber')}</th>
+              <th>${LocalizationService.getTranslation('employeeList.department')}</th>
+              <th>${LocalizationService.getTranslation('employeeList.position')}</th>
+              <th>${LocalizationService.getTranslation('employeeList.actions')}</th>
             </tr>
-          `)}
-          ${this.paginatedEmployees.length === 0 ? html`
-            <tr>
-              <td colspan="6">${LocalizationService.getTranslation('employeeList.noRecords')}</td>
-            </tr>
-          ` : ''}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            ${this.paginatedEmployees.map(emp => html`
+              <tr>
+                <td>${emp.firstName}</td>
+                <td>${emp.lastName}</td>
+                <td>${emp.email}</td>
+                <td>${emp.dateOfEmployment}</td>
+                <td>${emp.dateOfBirth}</td>
+                <td>${emp.phoneNumber}</td>
+                <td>${emp.department}</td>
+                <td>${emp.position}</td>
+                <td>
+                  <div class="actions">
+                    <a href="/edit/${emp.id}" class="action-button edit-button">
+                      <icon-component name="edit" size="20"></icon-component>
+                    </a>
+                    <button class="action-button delete-button" @click=${() => this.handleDelete(emp.id)}>
+                      <icon-component name="delete" size="20"></icon-component>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            `)}
+            ${this.paginatedEmployees.length === 0 ? html`
+              <tr>
+                <td colspan="9">${LocalizationService.getTranslation('employeeList.noRecords')}</td>
+              </tr>
+            ` : ''}
+          </tbody>
+        </table>
+      </div>
     `;
   }
 
@@ -396,23 +426,24 @@ class EmployeeList extends LitElement {
   render() {
     return html`
       <div class="container">
-        <h1>${LocalizationService.getTranslation('employeeList.title')}</h1>
-        
-        <div class="view-toggle">
-          <button 
-            class=${this.viewMode === 'list' ? 'active' : ''}
-            @click=${() => this.handleViewModeChange('list')}
-            title=${LocalizationService.getTranslation('employeeList.listView')}
-          >
-            <icon-component name="list" size="16"></icon-component>
-          </button>
-          <button 
-            class=${this.viewMode === 'table' ? 'active' : ''}
-            @click=${() => this.handleViewModeChange('table')}
-            title=${LocalizationService.getTranslation('employeeList.tableView')}
-          >
-            <icon-component name="table" size="16"></icon-component>
-          </button>
+        <div class="header">
+          <h1>${LocalizationService.getTranslation('employeeList.title')}</h1>
+          <div class="view-toggle">
+            <button 
+              class=${this.viewMode === 'list' ? 'active' : ''}
+              @click=${() => this.handleViewModeChange('list')}
+              title=${LocalizationService.getTranslation('employeeList.listView')}
+            >
+              <icon-component name="list" size="16"></icon-component>
+            </button>
+            <button 
+              class=${this.viewMode === 'table' ? 'active' : ''}
+              @click=${() => this.handleViewModeChange('table')}
+              title=${LocalizationService.getTranslation('employeeList.tableView')}
+            >
+              <icon-component name="table" size="16"></icon-component>
+            </button>
+          </div>
         </div>
 
         <input 
