@@ -1,36 +1,38 @@
-import { legacyPlugin } from '@web/dev-server-legacy';
+import { playwrightLauncher } from '@web/test-runner-playwright';
+import { esbuildPlugin } from '@web/dev-server-esbuild';
 
 export default {
+  files: 'test/**/*_test.js',
   nodeResolve: true,
-  files: ['test/**/*_test.js'],
   coverage: true,
   coverageConfig: {
-    include: ['src/**/*.js'],
+    exclude: ['**/node_modules/**/*', '**/test/**/*'],
   },
+  browsers: [playwrightLauncher({ product: 'chromium' })],
   plugins: [
-    // make sure this plugin is always last
-    legacyPlugin({
-      polyfills: {
-        webcomponents: true,
-        // Inject lit's polyfill-support module into test files, which is required
-        // for interfacing with the webcomponents polyfills
-        custom: [
-          {
-            name: 'lit-polyfill-support',
-            path: 'node_modules/lit/polyfill-support.js',
-            test: "!('attachShadow' in Element.prototype)",
-            module: false,
-          },
-        ],
-      },
-    }),
-  ],
-  middleware: [
-    function(context, next) {
-      if (context.path.endsWith('.js')) {
-        context.set('Content-Type', 'application/javascript');
+    esbuildPlugin({ 
+      ts: true,
+      json: true,
+      target: 'auto',
+      define: {
+        'process.env.NODE_ENV': '"test"',
+        'process.env': '{}',
+        'process': '{ env: { NODE_ENV: "test" } }'
       }
-      return next();
+    })
+  ],
+  testFramework: {
+    config: {
+      ui: 'bdd',
+      timeout: '2000'
     }
-  ]
+  },
+  testRunnerHtml: testFramework => `
+    <html>
+      <head>
+        <script type="module" src="/test/test-setup.js"></script>
+        <script type="module" src="${testFramework}"></script>
+      </head>
+    </html>
+  `
 };

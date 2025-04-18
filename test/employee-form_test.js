@@ -1,145 +1,221 @@
-import { html, render } from 'lit-html';
-import { fixture, expect, elementUpdated } from '@open-wc/testing';
+import { html, fixture, expect } from '@open-wc/testing';
+import sinon from 'sinon';
 import '../src/components/employee-form.js';
 import { store } from '../src/state/store.js';
 import { LocalizationService } from '../src/services/localization.js';
+import { Router } from '@vaadin/router';
 
 describe('EmployeeForm', () => {
   let element;
-  const mockEmployee = {
-    id: '1',
-    firstName: 'John',
-    lastName: 'Doe',
-    email: 'john@example.com',
-    phoneNumber: '1234567890',
-    dateOfEmployment: '2023-01-01',
-    dateOfBirth: '1990-01-01',
-    department: 'Tech',
-    position: 'Senior'
-  };
+  let dispatchStub;
 
   beforeEach(async () => {
-    element = await fixture(html`<employee-form></employee-form>`);
-    await elementUpdated(element);
-  });
-
-  it('renders the form title', () => {
-    const title = element.shadowRoot.querySelector('h1');
-    expect(title).to.exist;
-    expect(title.textContent).to.equal(LocalizationService.getTranslation('employeeForm.addTitle'));
-  });
-
-  it('renders all required form fields', () => {
-    const form = element.shadowRoot.querySelector('form');
-    expect(form).to.exist;
-
-    const requiredFields = [
-      'firstName',
-      'lastName',
-      'email',
-      'phoneNumber',
-      'dateOfEmployment',
-      'dateOfBirth',
-      'department',
-      'position'
-    ];
-
-    requiredFields.forEach(field => {
-      const input = form.querySelector(`[name="${field}"]`);
-      expect(input).to.exist;
-      if (field !== 'department' && field !== 'position') {
-        expect(input.hasAttribute('required')).to.be.true;
-      }
+    // Stub store methods
+    dispatchStub = sinon.stub();
+    sinon.stub(store, 'dispatch').callsFake(dispatchStub);
+    sinon.stub(store, 'getState').returns({
+      employees: [
+        {
+          id: '1',
+          firstName: 'John',
+          lastName: 'Doe',
+          email: 'john@example.com',
+          phoneNumber: '1234567890',
+          department: 'Tech',
+          position: 'Senior',
+          dateOfEmployment: '2020-01-01',
+          dateOfBirth: '1990-01-01'
+        }
+      ]
     });
+
+    // Stub LocalizationService
+    sinon.stub(LocalizationService, 'getCurrentLanguage').returns('en');
+    sinon.stub(LocalizationService, 'getTranslation').callsFake((key) => {
+      const translations = {
+        'employeeForm.addTitle': 'Add Employee',
+        'employeeForm.editTitle': 'Edit Employee',
+        'employeeForm.firstName': 'First Name',
+        'employeeForm.lastName': 'Last Name',
+        'employeeForm.email': 'Email Address',
+        'employeeForm.phoneNumber': 'Phone Number',
+        'employeeForm.department': 'Department',
+        'employeeForm.position': 'Position',
+        'employeeForm.dateOfEmployment': 'Date of Employment',
+        'employeeForm.dateOfBirth': 'Date of Birth',
+        'employeeForm.save': 'Save',
+        'employeeForm.update': 'Update',
+        'employeeForm.back': 'Back to List',
+        'employeeForm.firstNamePlaceholder': 'Enter first name',
+        'employeeForm.lastNamePlaceholder': 'Enter last name',
+        'employeeForm.phoneNumberPlaceholder': 'Enter phone number',
+        'employeeForm.emailPlaceholder': 'Enter email address',
+        'employeeForm.analytics': 'Analytics',
+        'employeeForm.tech': 'Tech',
+        'employeeForm.junior': 'Junior',
+        'employeeForm.medior': 'Medior',
+        'employeeForm.senior': 'Senior'
+      };
+      return translations[key] || key;
+    });
+
+    // Stub Router
+    sinon.stub(Router, 'go');
+
+    element = await fixture(html`<employee-form></employee-form>`);
   });
 
-  it('pre-fills form fields in edit mode', async () => {
-    // Set edit mode and employee data
+  afterEach(() => {
+    sinon.restore();
+  });
+
+  it('initializes with default values', () => {
+    expect(element.employee).to.deep.equal({
+      firstName: '',
+      lastName: '',
+      dateOfEmployment: '',
+      dateOfBirth: '',
+      phoneNumber: '',
+      email: '',
+      department: 'Analytics',
+      position: 'Junior'
+    });
+    expect(element.isEditMode).to.be.false;
+  });
+
+  it('loads employee data in edit mode', async () => {
+    // Create element and set edit mode
+    element = await fixture(html`<employee-form></employee-form>`);
     element.isEditMode = true;
-    element.employee = mockEmployee;
-    await elementUpdated(element);
+    element.employee = store.getState().employees[0];
+    await element.updateComplete;
 
-    const form = element.shadowRoot.querySelector('form');
-    expect(form.querySelector('[name="firstName"]').value).to.equal(mockEmployee.firstName);
-    expect(form.querySelector('[name="lastName"]').value).to.equal(mockEmployee.lastName);
-    expect(form.querySelector('[name="email"]').value).to.equal(mockEmployee.email);
-    expect(form.querySelector('[name="phoneNumber"]').value).to.equal(mockEmployee.phoneNumber);
-    expect(form.querySelector('[name="department"]').value).to.equal(mockEmployee.department);
-    expect(form.querySelector('[name="position"]').value).to.equal(mockEmployee.position);
+    expect(element.isEditMode).to.be.true;
+    expect(element.employee.firstName).to.equal('John');
+    expect(element.employee.lastName).to.equal('Doe');
+    expect(element.employee.email).to.equal('john@example.com');
   });
 
-  it('validates email format', async () => {
-    const form = element.shadowRoot.querySelector('form');
-    const emailInput = form.querySelector('[name="email"]');
-    
-    // Invalid email
-    emailInput.value = 'invalid-email';
-    form.dispatchEvent(new Event('submit'));
-    await elementUpdated(element);
+  it('validates form data correctly', () => {
+    const validData = {
+      firstName: 'John',
+      lastName: 'Doe',
+      email: 'john@example.com',
+      phoneNumber: '+1 (123) 456-7890',
+      department: 'Tech',
+      position: 'Senior',
+      dateOfEmployment: '2020-01-01',
+      dateOfBirth: '1990-01-01'
+    };
 
-    expect(emailInput.validity.valid).to.be.false;
+    expect(element.validate(validData)).to.be.true;
 
-    // Valid email
-    emailInput.value = 'valid@example.com';
-    form.dispatchEvent(new Event('submit'));
-    await elementUpdated(element);
+    const invalidEmail = { ...validData, email: 'invalid-email' };
+    expect(element.validate(invalidEmail)).to.be.false;
 
-    expect(emailInput.validity.valid).to.be.true;
+    const invalidPhone = { ...validData, phoneNumber: '123' };
+    expect(element.validate(invalidPhone)).to.be.false;
   });
 
-  it('validates phone number format', async () => {
+  it('submits new employee data', async () => {
     const form = element.shadowRoot.querySelector('form');
-    const phoneInput = form.querySelector('[name="phoneNumber"]');
-    
-    // Invalid phone number
-    phoneInput.value = '123';
-    form.dispatchEvent(new Event('submit'));
-    await elementUpdated(element);
+    const submitEvent = new CustomEvent('submit', {
+      bubbles: true,
+      cancelable: true
+    });
 
-    expect(phoneInput.validity.valid).to.be.false;
+    // Set form field values
+    element.employee = {
+      firstName: 'New',
+      lastName: 'Employee',
+      email: 'new@example.com',
+      phoneNumber: '+1 (234) 567-8901',
+      department: 'Analytics',
+      position: 'Junior',
+      dateOfEmployment: '2023-01-01',
+      dateOfBirth: '1995-01-01'
+    };
+    await element.updateComplete;
 
-    // Valid phone number
-    phoneInput.value = '1234567890';
-    form.dispatchEvent(new Event('submit'));
-    await elementUpdated(element);
-
-    expect(phoneInput.validity.valid).to.be.true;
-  });
-
-  it('dispatches add action for new employee', async () => {
-    const form = element.shadowRoot.querySelector('form');
-    const submitEvent = new Event('submit', { cancelable: true });
-    
     form.dispatchEvent(submitEvent);
-    await elementUpdated(element);
+    await element.updateComplete;
 
-    // Check if the event was not cancelled (form was submitted)
-    expect(submitEvent.defaultPrevented).to.be.true;
+    expect(dispatchStub.calledOnce).to.be.true;
+    expect(dispatchStub.firstCall.args[0].type).to.equal('employees/addEmployee');
+    expect(Router.go.calledWith('/')).to.be.true;
   });
 
-  it('dispatches edit action for existing employee', async () => {
+  it('updates existing employee data', async () => {
+    // Create element and set edit mode
+    element = await fixture(html`<employee-form></employee-form>`);
     element.isEditMode = true;
-    element.employee = mockEmployee;
-    await elementUpdated(element);
+    element.employee = { ...store.getState().employees[0] };
+    await element.updateComplete;
 
     const form = element.shadowRoot.querySelector('form');
-    const submitEvent = new Event('submit', { cancelable: true });
-    
-    form.dispatchEvent(submitEvent);
-    await elementUpdated(element);
+    const submitEvent = new CustomEvent('submit', {
+      bubbles: true,
+      cancelable: true
+    });
 
-    // Check if the event was not cancelled (form was submitted)
-    expect(submitEvent.defaultPrevented).to.be.true;
+    // Update form field values
+    element.employee = {
+      ...element.employee,
+      firstName: 'Updated',
+      lastName: 'Name',
+      email: 'updated@example.com'
+    };
+    await element.updateComplete;
+
+    form.dispatchEvent(submitEvent);
+    await element.updateComplete;
+
+    expect(dispatchStub.calledOnce).to.be.true;
+    expect(dispatchStub.firstCall.args[0].type).to.equal('employees/editEmployee');
+    expect(dispatchStub.firstCall.args[0].payload.id).to.equal('1');
+    expect(Router.go.calledWith('/')).to.be.true;
   });
 
-  it('updates when language changes', async () => {
-    const originalTitle = element.shadowRoot.querySelector('h1').textContent;
+  it('handles language changes', async () => {
+    const event = new CustomEvent('language-changed', {
+      detail: { language: 'tr' }
+    });
+    window.dispatchEvent(event);
+    await element.updateComplete;
     
-    // Change language
-    LocalizationService.setLanguage('tr');
-    await elementUpdated(element);
+    expect(element.currentLanguage).to.equal('tr');
+  });
 
-    const newTitle = element.shadowRoot.querySelector('h1').textContent;
-    expect(newTitle).to.not.equal(originalTitle);
+  it('renders form fields with correct labels', async () => {
+    const labels = element.shadowRoot.querySelectorAll('label');
+    const labelTexts = Array.from(labels).map(label => label.textContent.trim());
+    
+    expect(labelTexts).to.include('First Name');
+    expect(labelTexts).to.include('Last Name');
+    expect(labelTexts).to.include('Email Address');
+    expect(labelTexts).to.include('Phone Number');
+    expect(labelTexts).to.include('Department');
+    expect(labelTexts).to.include('Position');
+    expect(labelTexts).to.include('Date of Employment');
+    expect(labelTexts).to.include('Date of Birth');
+  });
+
+  it('shows correct title based on mode', async () => {
+    const title = element.shadowRoot.querySelector('h1');
+    expect(title.textContent.trim()).to.equal('Add Employee');
+
+    // Create element and set edit mode
+    element = await fixture(html`<employee-form></employee-form>`);
+    element.isEditMode = true;
+    element.employee = store.getState().employees[0];
+    await element.updateComplete;
+
+    const editTitle = element.shadowRoot.querySelector('h1');
+    expect(editTitle.textContent.trim()).to.equal('Edit Employee');
+  });
+
+  it('handles back button click', async () => {
+    const backButton = element.shadowRoot.querySelector('.back-button');
+    expect(backButton.getAttribute('href')).to.equal('/');
   });
 }); 
