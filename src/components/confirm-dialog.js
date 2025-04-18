@@ -92,6 +92,18 @@ class ConfirmDialog extends LitElement {
     this.title = '';
     this.message = '';
     this.onConfirm = null;
+    
+    this._handleLanguageChange = this._handleLanguageChange.bind(this);
+    window.addEventListener('language-changed', this._handleLanguageChange);
+  }
+
+  disconnectedCallback() {
+    window.removeEventListener('language-changed', this._handleLanguageChange);
+    super.disconnectedCallback();
+  }
+
+  _handleLanguageChange() {
+    this.requestUpdate();
   }
 
   open({ title, message, onConfirm }) {

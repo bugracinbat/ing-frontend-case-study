@@ -7,7 +7,7 @@
   "module": "my-element.js",
   "type": "module",
   "scripts": {
-    "build": "echo \"This is not a TypeScript project, so no need to build.\"",
+    "build": "rollup -c",
     "lint": "npm run lint:lit-analyzer && npm run lint:eslint",
     "lint:eslint": "eslint '**/*.js'",
     "lint:lit-analyzer": "lit-analyzer my-element.js",
@@ -63,9 +63,13 @@
     "eslint": "^8.15.0",
     "lit-analyzer": "^1.2.1",
     "prettier": "^2.6.2",
+    "process": "^0.11.10",
     "rimraf": "^3.0.2",
     "rollup": "^4.18.0",
-    "rollup-plugin-summary": "^2.0.1"
+    "rollup-plugin-replace": "^2.2.0",
+    "rollup-plugin-summary": "^2.0.1",
+    "sinon": "^20.0.0",
+    "sinon-chai": "^4.0.0"
   },
   "customElements": "custom-elements.json"
 }
