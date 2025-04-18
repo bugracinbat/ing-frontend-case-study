@@ -21,6 +21,7 @@ const translations = {
     employeeForm: {
       addTitle: 'Add Employee',
       editTitle: 'Edit Employee',
+      addButton: 'Save',
       firstName: 'First Name',
       lastName: 'Last Name',
       dateOfEmployment: 'Date of Employment',
@@ -40,7 +41,9 @@ const translations = {
       firstNamePlaceholder: 'Enter first name',
       lastNamePlaceholder: 'Enter last name',
       phoneNumberPlaceholder: 'Enter phone number',
-      emailPlaceholder: 'Enter email address'
+      emailPlaceholder: 'Enter email address',
+      selectDepartment: 'Select Department',
+      selectPosition: 'Select Position'
     },
     navigation: {
       list: 'Employee List',
@@ -82,6 +85,7 @@ const translations = {
     employeeForm: {
       addTitle: 'Çalışan Ekle',
       editTitle: 'Çalışan Düzenle',
+      addButton: 'Kaydet',
       firstName: 'Ad',
       lastName: 'Soyad',
       dateOfEmployment: 'İşe Başlama Tarihi',
@@ -101,7 +105,9 @@ const translations = {
       firstNamePlaceholder: 'Adı girin',
       lastNamePlaceholder: 'Soyadı girin',
       phoneNumberPlaceholder: 'Telefon numarası girin',
-      emailPlaceholder: 'E-posta adresi girin'
+      emailPlaceholder: 'E-posta adresi girin',
+      selectDepartment: 'Departman Seçin',
+      selectPosition: 'Pozisyon Seçin'
     },
     navigation: {
       list: 'Çalışan Listesi',
@@ -131,7 +137,6 @@ export class LocalizationService {
   static setLanguage(lang) {
     if (translations[lang]) {
       document.documentElement.lang = lang;
-      // Dispatch a custom event to notify components of language change
       window.dispatchEvent(new CustomEvent('language-changed', { detail: { language: lang } }));
     }
   }

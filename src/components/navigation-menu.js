@@ -6,7 +6,8 @@ class NavigationMenu extends LitElement {
   static get properties() {
     return {
       currentLanguage: { type: String },
-      currentPath: { type: String }
+      currentPath: { type: String },
+      isMenuOpen: { type: Boolean }
     };
   }
 
@@ -65,12 +66,57 @@ class NavigationMenu extends LitElement {
       color: white;
     }
 
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      justify-content: space-between;
+      width: 30px;
+      height: 21px;
+      cursor: pointer;
+      margin-right: auto;
+    }
+
+    .hamburger span {
+      display: block;
+      height: 3px;
+      width: 100%;
+      background-color: #ff6200;
+      border-radius: 3px;
+      transition: all 0.3s ease;
+    }
+
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      top: 60px;
+      left: 0;
+      right: 0;
+      background: white;
+      padding: 20px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      z-index: 999;
+    }
+
+    .mobile-menu.open {
+      display: block;
+    }
+
+    .mobile-menu a {
+      display: block;
+      margin: 10px 0;
+      padding: 10px;
+      text-align: center;
+    }
+
     @media (max-width: 768px) {
       nav {
         padding: 10px;
       }
       .nav-links {
         display: none;
+      }
+      .hamburger {
+        display: flex;
       }
       .language-toggle {
         margin-left: auto;
@@ -82,17 +128,20 @@ class NavigationMenu extends LitElement {
     super();
     this.currentLanguage = LocalizationService.getCurrentLanguage();
     this.currentPath = window.location.pathname;
+    this.isMenuOpen = false;
   }
 
   connectedCallback() {
     super.connectedCallback();
     window.addEventListener('language-changed', this.handleLanguageChange);
     window.addEventListener('popstate', this.handleRouteChange);
+    window.addEventListener('resize', this.handleResize);
   }
 
   disconnectedCallback() {
     window.removeEventListener('language-changed', this.handleLanguageChange);
     window.removeEventListener('popstate', this.handleRouteChange);
+    window.removeEventListener('resize', this.handleResize);
     super.disconnectedCallback();
   }
 
@@ -103,6 +152,18 @@ class NavigationMenu extends LitElement {
 
   handleLanguageChange = (e) => {
     this.currentLanguage = e.detail.language;
+    this.requestUpdate();
+  }
+
+  handleResize = () => {
+    if (window.innerWidth > 768 && this.isMenuOpen) {
+      this.isMenuOpen = false;
+      this.requestUpdate();
+    }
+  }
+
+  toggleMenu = () => {
+    this.isMenuOpen = !this.isMenuOpen;
     this.requestUpdate();
   }
 
@@ -117,6 +178,11 @@ class NavigationMenu extends LitElement {
   render() {
     return html`
       <nav>
+        <div class="hamburger" @click=${this.toggleMenu}>
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
         <div class="nav-links">
           <a 
             @click=${() => Router.go('/')}
@@ -142,6 +208,26 @@ class NavigationMenu extends LitElement {
           `)}
         </div>
       </nav>
+      <div class="mobile-menu ${this.isMenuOpen ? 'open' : ''}">
+        <a 
+          @click=${() => {
+            Router.go('/');
+            this.isMenuOpen = false;
+          }}
+          class=${this.isActive('/') ? 'active' : ''}
+        >
+          ${LocalizationService.getTranslation('navigation.list')}
+        </a>
+        <a 
+          @click=${() => {
+            Router.go('/add');
+            this.isMenuOpen = false;
+          }}
+          class=${this.isActive('/add') ? 'active' : ''}
+        >
+          ${LocalizationService.getTranslation('navigation.add')}
+        </a>
+      </div>
     `;
   }
 }

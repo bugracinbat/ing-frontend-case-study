@@ -5,14 +5,30 @@ class IconComponent extends LitElement {
     return {
       name: { type: String },
       size: { type: Number },
-      color: { type: String }
+      color: { type: String },
+      position: { type: String }
     };
   }
 
   static styles = css`
     :host {
-      display: inline-block;
-      line-height: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .icon-left {
+      margin-right: 8px;
+    }
+
+    .icon-right {
+      margin-left: 8px;
     }
   `;
 
@@ -20,6 +36,7 @@ class IconComponent extends LitElement {
     super();
     this.size = 24;
     this.color = 'currentColor';
+    this.position = 'center';
   }
 
   getIconTemplate() {
@@ -54,7 +71,11 @@ class IconComponent extends LitElement {
   }
 
   render() {
-    return html`${this.getIconTemplate()}`;
+    return html`
+      <div class="icon ${this.position === 'left' ? 'icon-left' : this.position === 'right' ? 'icon-right' : ''}">
+        ${this.getIconTemplate()}
+      </div>
+    `;
   }
 }
 

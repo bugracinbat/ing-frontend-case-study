@@ -14,7 +14,7 @@ class EmployeeList extends LitElement {
       employeesPerPage: { type: Number },
       searchQuery: { type: String },
       currentLanguage: { type: String },
-      viewMode: { type: String } // 'table' or 'list'
+      viewMode: { type: String } 
     };
   }
 
@@ -192,13 +192,13 @@ class EmployeeList extends LitElement {
     this.employeesPerPage = 10;
     this.searchQuery = '';
     this.currentLanguage = LocalizationService.getCurrentLanguage();
-    this.viewMode = 'table'; // Default to table view
+    this.viewMode = 'table'; 
 
-    // Initial state
+    this.updateViewMode();
+
     const initialState = store.getState();
     this.employees = Array.isArray(initialState.employees) ? initialState.employees : [];
 
-    // Subscribe to store updates
     this.unsubscribe = store.subscribe(() => {
       const newState = store.getState();
       const newEmployees = Array.isArray(newState.employees) ? newState.employees : [];
@@ -212,14 +212,26 @@ class EmployeeList extends LitElement {
   connectedCallback() {
     super.connectedCallback();
     window.addEventListener('language-changed', this.handleLanguageChange);
+    window.addEventListener('resize', this.handleResize);
   }
 
   disconnectedCallback() {
+    window.removeEventListener('language-changed', this.handleLanguageChange);
+    window.removeEventListener('resize', this.handleResize);
     super.disconnectedCallback();
     if (this.unsubscribe) {
       this.unsubscribe();
     }
-    window.removeEventListener('language-changed', this.handleLanguageChange);
+  }
+
+  handleResize = () => {
+    this.updateViewMode();
+  }
+
+  updateViewMode = () => {
+    const isMobile = window.innerWidth <= 768;
+    this.viewMode = isMobile ? 'list' : 'table';
+    this.requestUpdate();
   }
 
   handleLanguageChange = (e) => {
