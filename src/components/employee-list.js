@@ -15,77 +15,109 @@ class EmployeeList extends LitElement {
       employeesPerPage: { type: Number },
       searchQuery: { type: String },
       currentLanguage: { type: String },
-      viewMode: { type: String } 
+      viewMode: { type: String },
+      sortColumn: { type: String },
+      sortDirection: { type: String }
     };
   }
 
   static styles = css`
     .container {
       max-width: 1200px;
-      margin: 80px auto 20px;
-      padding: 16px;
-      background-color: white;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-      border-radius: 8px;
+      margin: 5rem auto 2rem;
+      padding: 1.5rem;
+      background-color: var(--surface);
+      box-shadow: var(--shadow-md);
+      border-radius: 0.5rem;
+      border: 1px solid var(--border-color);
     }
 
     .header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 24px;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+      gap: 1rem;
     }
 
     h1 {
-      color: #ff6200;
+      color: var(--primary-color);
       margin: 0;
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+
+    .search-container {
+      flex: 1;
+      width: 100%;
+      position: relative;
+    }
+
+    .search-input {
+      padding: 0.75rem 1rem 0.75rem 2.5rem;
+      width: 100%;
+      border: 1px solid var(--border-color);
+      border-radius: 0.375rem;
+      font-size: 0.875rem;
+      transition: all 0.2s ease;
+      background: var(--surface);
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 2px rgba(255, 98, 0, 0.1);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 0.75rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-secondary);
+      pointer-events: none;
     }
 
     .view-toggle {
       display: flex;
-      gap: 8px;
+      gap: 0.5rem;
+      margin-left: auto;
     }
 
     .view-toggle button {
-      padding: 8px;
-      border: 1px solid #ddd;
-      background: white;
+      padding: 0.5rem;
+      border: 1px solid var(--border-color);
+      background: var(--surface);
       cursor: pointer;
-      border-radius: 4px;
+      border-radius: 0.375rem;
       display: flex;
       align-items: center;
       justify-content: center;
-      min-width: 36px;
-      height: 36px;
-    }
-
-    .view-toggle button.active {
-      background: #ff6200;
-      color: white;
-      border-color: #ff6200;
+      min-width: 2.5rem;
+      height: 2.5rem;
+      transition: all 0.2s ease;
     }
 
     .view-toggle button:hover {
-      background: #f5f5f5;
+      border-color: var(--primary-color);
+      color: var(--primary-color);
     }
 
-    .view-toggle button.active:hover {
-      background: #e55a00;
+    .view-toggle button.active {
+      background: var(--primary-color);
+      color: white;
+      border-color: var(--primary-color);
     }
 
-    input {
-      padding: 8px;
-      width: 100%;
-      margin-bottom: 16px;
-      box-sizing: border-box;
-    }
-
-    /* Table View Styles */
     .table-container {
       width: 100%;
       overflow-x: auto;
-      margin-bottom: 16px;
+      margin-bottom: 1.5rem;
       -webkit-overflow-scrolling: touch;
+      border-radius: 0.375rem;
+      border: 1px solid var(--border-color);
+      background: var(--surface);
     }
 
     table {
@@ -95,75 +127,118 @@ class EmployeeList extends LitElement {
     }
 
     th, td {
-      padding: 12px;
-      border-bottom: 1px solid #ddd;
+      padding: 1rem;
+      border-bottom: 1px solid var(--border-color);
       text-align: center;
       white-space: nowrap;
+      font-size: 0.875rem;
     }
 
     th {
-      background-color: #f5f5f5;
-      color: #ff6200;
-      font-weight: bold;
+      background-color: var(--background);
+      color: var(--text-secondary);
+      font-weight: 500;
       position: sticky;
       top: 0;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-size: 0.75rem;
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.2s ease;
+      text-align: center;
+      padding: 1rem;
+    }
+
+    th:hover {
+      background-color: var(--background-hover);
+    }
+
+    .sortable {
+      position: relative;
+      padding-right: 1.5rem;
+    }
+
+    .sort-icon {
+      position: absolute;
+      right: 0.5rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--primary-color);
     }
 
     tr:last-child td {
       border-bottom: none;
     }
 
-    /* List View Styles */
+    tr:hover td {
+      background-color: var(--background);
+    }
+
     .list-view {
       display: grid;
-      gap: 16px;
+      gap: 1rem;
     }
 
     .list-item {
-      padding: 16px;
-      border: 1px solid #ddd;
-      border-radius: 8px;
+      padding: 1.5rem;
+      border: 1px solid var(--border-color);
+      border-radius: 0.5rem;
       display: grid;
       grid-template-columns: 1fr auto;
-      gap: 16px;
+      gap: 1.5rem;
+      transition: all 0.2s ease;
+      background: var(--surface);
+    }
+
+    .list-item:hover {
+      border-color: var(--primary-color);
+      box-shadow: var(--shadow-sm);
+      transform: translateY(-1px);
     }
 
     .list-item-content {
       display: grid;
-      gap: 8px;
+      gap: 0.75rem;
     }
 
     .list-item-field {
       display: grid;
       grid-template-columns: 120px 1fr;
-      gap: 8px;
+      gap: 0.75rem;
+      align-items: center;
     }
 
     .list-item-field-label {
-      font-weight: bold;
-      color: #ff6200;
+      font-weight: 500;
+      color: var(--text-secondary);
+      font-size: 0.875rem;
     }
 
     .actions {
       display: flex;
-      gap: 8px;
+      gap: 0.75rem;
       justify-content: center;
       align-items: center;
     }
 
     .action-button {
-      padding: 4px;
+      padding: 0.5rem;
       border: none;
       background: transparent;
       cursor: pointer;
-      color: #666;
+      color: var(--text-secondary);
       display: flex;
       align-items: center;
       justify-content: center;
+      border-radius: 0.375rem;
+      transition: all 0.2s ease;
     }
 
     .action-button:hover {
-      color: #ff6200;
+      color: var(--primary-color);
+      background: rgba(255, 98, 0, 0.05);
+      transform: scale(1.1);
     }
 
     .edit-button {
@@ -176,32 +251,50 @@ class EmployeeList extends LitElement {
 
     .edit-button:hover {
       color: #0056b3;
+      background: rgba(0, 123, 255, 0.05);
     }
 
     .delete-button:hover {
       color: #c82333;
+      background: rgba(220, 53, 69, 0.05);
     }
 
-    /* Pagination Styles */
-    pagination-component {
-      --pagination-selected-bg: #ff6200;
-      --pagination-selected-color: white;
+    .no-results {
+      text-align: center;
+      padding: 2rem;
+      color: var(--text-secondary);
+      font-size: 0.875rem;
     }
 
     @media (max-width: 768px) {
       .container {
-        padding: 8px;
-        margin: 60px 0 20px;
+        padding: 1rem;
+        margin: 4rem 1rem 1rem;
+      }
+
+      .header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1rem;
+      }
+
+      .search-container {
+        min-width: 100%;
+        max-width: 100%;
+      }
+
+      .view-toggle {
+        margin-left: 0;
+        justify-content: flex-end;
       }
 
       .table-container {
-        margin: 0 -8px;
-        padding: 0 8px;
+        margin: 0 -1rem;
+        padding: 0 1rem;
       }
 
       th, td {
-        padding: 8px;
-        font-size: 14px;
+        padding: 0.75rem;
       }
 
       .list-item {
@@ -213,7 +306,7 @@ class EmployeeList extends LitElement {
       }
 
       .list-item-field-label {
-        margin-bottom: 4px;
+        margin-bottom: 0.25rem;
       }
     }
   `;
@@ -225,7 +318,9 @@ class EmployeeList extends LitElement {
     this.employeesPerPage = 10;
     this.searchQuery = '';
     this.currentLanguage = LocalizationService.getCurrentLanguage();
-    this.viewMode = 'table'; 
+    this.viewMode = 'table';
+    this.sortColumn = 'firstName';
+    this.sortDirection = 'asc';
 
     this.updateViewMode();
 
@@ -286,9 +381,53 @@ class EmployeeList extends LitElement {
     return Math.ceil(this.filteredEmployees.length / this.employeesPerPage);
   }
 
+  handleSort(column) {
+    if (this.sortColumn === column) {
+      if (this.sortDirection === 'desc') {
+        this.sortColumn = 'firstName';
+        this.sortDirection = 'asc';
+      } else {
+        this.sortDirection = 'desc';
+      }
+    } else {
+      this.sortColumn = column;
+      this.sortDirection = 'asc';
+    }
+  }
+
+  get sortedEmployees() {
+    const sorted = [...this.filteredEmployees];
+    sorted.sort((a, b) => {
+      const aValue = a[this.sortColumn];
+      const bValue = b[this.sortColumn];
+      
+      if (typeof aValue === 'string') {
+        return this.sortDirection === 'asc' 
+          ? aValue.localeCompare(bValue)
+          : bValue.localeCompare(aValue);
+      }
+      
+      return this.sortDirection === 'asc' 
+        ? aValue - bValue 
+        : bValue - aValue;
+    });
+    
+    return sorted;
+  }
+
   get paginatedEmployees() {
     const start = (this.currentPage - 1) * this.employeesPerPage;
-    return this.filteredEmployees.slice(start, start + this.employeesPerPage);
+    return this.sortedEmployees.slice(start, start + this.employeesPerPage);
+  }
+
+  renderSortIcon(column) {
+    if (this.sortColumn !== column) return '';
+    
+    return html`
+      <span class="sort-icon">
+        <icon-component name=${this.sortDirection === 'asc' ? 'arrow-up' : 'arrow-down'} size="12"></icon-component>
+      </span>
+    `;
   }
 
   handleEdit(id) {
@@ -323,17 +462,11 @@ class EmployeeList extends LitElement {
   }
 
   renderTableView() {
-    if (!this.employees || this.employees.length === 0) {
+    if (this.filteredEmployees.length === 0) {
       return html`
-        <table>
-          <tbody>
-            <tr>
-              <td colspan="6" style="text-align: center;">
-                No records found
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        <div class="no-results">
+          ${LocalizationService.getTranslation('employeeList.noRecords')}
+        </div>
       `;
     }
 
@@ -342,14 +475,38 @@ class EmployeeList extends LitElement {
         <table>
           <thead>
             <tr>
-              <th>${LocalizationService.getTranslation('employeeList.firstName')}</th>
-              <th>${LocalizationService.getTranslation('employeeList.lastName')}</th>
-              <th>${LocalizationService.getTranslation('employeeList.dateOfEmployment')}</th>
-              <th>${LocalizationService.getTranslation('employeeList.dateOfBirth')}</th>
-              <th>${LocalizationService.getTranslation('employeeList.phoneNumber')}</th>
-              <th>${LocalizationService.getTranslation('employeeList.email')}</th>
-              <th>${LocalizationService.getTranslation('employeeList.department')}</th>
-              <th>${LocalizationService.getTranslation('employeeList.position')}</th>
+              <th class="sortable" @click=${() => this.handleSort('firstName')}>
+                ${LocalizationService.getTranslation('employeeList.firstName')}
+                ${this.renderSortIcon('firstName')}
+              </th>
+              <th class="sortable" @click=${() => this.handleSort('lastName')}>
+                ${LocalizationService.getTranslation('employeeList.lastName')}
+                ${this.renderSortIcon('lastName')}
+              </th>
+              <th class="sortable" @click=${() => this.handleSort('dateOfEmployment')}>
+                ${LocalizationService.getTranslation('employeeList.dateOfEmployment')}
+                ${this.renderSortIcon('dateOfEmployment')}
+              </th>
+              <th class="sortable" @click=${() => this.handleSort('dateOfBirth')}>
+                ${LocalizationService.getTranslation('employeeList.dateOfBirth')}
+                ${this.renderSortIcon('dateOfBirth')}
+              </th>
+              <th class="sortable" @click=${() => this.handleSort('phoneNumber')}>
+                ${LocalizationService.getTranslation('employeeList.phoneNumber')}
+                ${this.renderSortIcon('phoneNumber')}
+              </th>
+              <th class="sortable" @click=${() => this.handleSort('email')}>
+                ${LocalizationService.getTranslation('employeeList.email')}
+                ${this.renderSortIcon('email')}
+              </th>
+              <th class="sortable" @click=${() => this.handleSort('department')}>
+                ${LocalizationService.getTranslation('employeeList.department')}
+                ${this.renderSortIcon('department')}
+              </th>
+              <th class="sortable" @click=${() => this.handleSort('position')}>
+                ${LocalizationService.getTranslation('employeeList.position')}
+                ${this.renderSortIcon('position')}
+              </th>
               <th>${LocalizationService.getTranslation('employeeList.actions')}</th>
             </tr>
           </thead>
@@ -381,6 +538,14 @@ class EmployeeList extends LitElement {
   }
 
   renderListView() {
+    if (this.filteredEmployees.length === 0) {
+      return html`
+        <div class="no-results">
+          ${LocalizationService.getTranslation('employeeList.noRecords')}
+        </div>
+      `;
+    }
+
     return html`
       <div class="list-view">
         ${this.paginatedEmployees.map(emp => html`
@@ -406,7 +571,6 @@ class EmployeeList extends LitElement {
                 <span class="list-item-field-label">${LocalizationService.getTranslation('employeeList.phoneNumber')}:</span>
                 <span>${emp.phoneNumber}</span>
               </div>
-
               <div class="list-item-field">
                 <span class="list-item-field-label">${LocalizationService.getTranslation('employeeList.email')}:</span>
                 <span>${emp.email}</span>
@@ -422,19 +586,14 @@ class EmployeeList extends LitElement {
             </div>
             <div class="actions">
               <button class="action-button edit-button" @click=${() => this.handleEdit(emp.id)}>
-                <icon-component name="edit" size="20"></icon-component>
+                <icon-component name="edit"></icon-component>
               </button>
               <button class="action-button delete-button" @click=${() => this.handleDelete(emp.id)}>
-                <icon-component name="delete" size="20"></icon-component>
+                <icon-component name="delete"></icon-component>
               </button>
             </div>
           </div>
         `)}
-        ${this.paginatedEmployees.length === 0 ? html`
-          <div class="list-item">
-            ${LocalizationService.getTranslation('employeeList.noRecords')}
-          </div>
-        ` : ''}
       </div>
     `;
   }
@@ -462,19 +621,27 @@ class EmployeeList extends LitElement {
           </div>
         </div>
 
-        <input 
-          type="text" 
-          placeholder=${LocalizationService.getTranslation('employeeList.searchPlaceholder')} 
-          @input=${this.handleSearch} 
-        />
+        <div class="search-container">
+          <input 
+            type="text" 
+            placeholder=${LocalizationService.getTranslation('employeeList.searchPlaceholder')} 
+            @input=${this.handleSearch} 
+            class="search-input"
+          />
+          <span class="search-icon">
+            <icon-component name="search"></icon-component>
+          </span>
+        </div>
 
         ${this.viewMode === 'table' ? this.renderTableView() : this.renderListView()}
 
-        <pagination-component
-          .currentPage=${this.currentPage}
-          .totalPages=${this.totalPages}
-          @page-changed=${this.handlePageChange}>
-        </pagination-component>
+        ${this.filteredEmployees.length > 0 ? html`
+          <pagination-component
+            .currentPage=${this.currentPage}
+            .totalPages=${this.totalPages}
+            @page-changed=${this.handlePageChange}>
+          </pagination-component>
+        ` : ''}
 
         <confirm-dialog></confirm-dialog>
       </div>

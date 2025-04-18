@@ -19,88 +19,93 @@ class EmployeeForm extends LitElement {
   static styles = css`
     .container {
       max-width: 600px;
-      margin: 80px auto 20px;
-      padding: 24px;
-      background-color: white;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-      border-radius: 8px;
+      margin: 5rem auto 2rem;
+      padding: 2rem;
+      background-color: var(--surface);
+      box-shadow: var(--shadow-md);
+      border-radius: 0.5rem;
+      border: 1px solid var(--border-color);
     }
 
     h1 {
-      color: #ff6200;
-      margin-bottom: 24px;
-      font-size: 24px;
+      color: var(--primary-color);
+      margin-bottom: 2rem;
+      font-size: 1.5rem;
       font-weight: 600;
     }
 
     .back-button {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      padding: 10px 16px;
-      margin-bottom: 16px;
-      background: #f5f5f5;
-      border: 1px solid #ddd;
-      border-radius: 4px;
+      gap: 0.5rem;
+      padding: 0.75rem 1rem;
+      margin-bottom: 1.5rem;
+      background: var(--background);
+      border: 1px solid var(--border-color);
+      border-radius: 0.375rem;
       cursor: pointer;
-      color: #333;
+      color: var(--text-secondary);
       text-decoration: none;
       transition: all 0.2s ease;
+      font-size: 0.875rem;
     }
 
     .back-button:hover {
-      background: #e0e0e0;
-      transform: translateX(-2px);
+      background: var(--surface);
+      border-color: var(--primary-color);
+      color: var(--primary-color);
     }
 
     .form-group {
-      margin-bottom: 20px;
+      margin-bottom: 1.5rem;
     }
 
     label {
       display: block;
-      margin-bottom: 8px;
-      color: #666;
+      margin-bottom: 0.5rem;
+      color: var(--text-secondary);
       font-weight: 500;
-      font-size: 14px;
+      font-size: 0.875rem;
     }
 
     input, select {
       width: 100%;
-      padding: 12px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
+      padding: 0.75rem 1rem;
+      border: 1px solid var(--border-color);
+      border-radius: 0.375rem;
       box-sizing: border-box;
-      font-size: 14px;
-      transition: border-color 0.2s ease;
+      font-size: 0.875rem;
+      transition: all 0.2s ease;
+      background: var(--surface);
     }
 
     input:focus, select:focus {
       outline: none;
-      border-color: #ff6200;
+      border-color: var(--primary-color);
       box-shadow: 0 0 0 2px rgba(255, 98, 0, 0.1);
     }
 
     input::placeholder {
-      color: #999;
+      color: var(--text-secondary);
+      opacity: 0.7;
     }
 
     button[type="submit"] {
-      background: #ff6200;
+      background: var(--primary-color);
       color: white;
-      padding: 12px 24px;
+      padding: 0.75rem 1.5rem;
       border: none;
-      border-radius: 4px;
+      border-radius: 0.375rem;
       cursor: pointer;
       width: 100%;
-      font-size: 16px;
+      font-size: 0.875rem;
       font-weight: 500;
-      transition: background-color 0.2s ease;
-      margin-top: 8px;
+      transition: all 0.2s ease;
+      margin-top: 1rem;
     }
 
     button[type="submit"]:hover {
-      background: #e55a00;
+      background: var(--primary-hover);
     }
 
     button[type="submit"]:active {
@@ -109,51 +114,51 @@ class EmployeeForm extends LitElement {
 
     @media (max-width: 768px) {
       .container {
-        margin: 60px 16px 20px;
-        padding: 20px;
+        margin: 4rem 1rem 1rem;
+        padding: 1.5rem;
       }
 
       h1 {
-        font-size: 20px;
+        font-size: 1.25rem;
       }
 
       .back-button {
-        padding: 8px 12px;
-        font-size: 14px;
+        padding: 0.5rem 0.75rem;
+        font-size: 0.75rem;
       }
 
       input, select {
-        padding: 10px;
+        padding: 0.625rem 0.875rem;
       }
 
       button[type="submit"] {
-        padding: 10px 20px;
-        font-size: 14px;
+        padding: 0.625rem 1.25rem;
+        font-size: 0.75rem;
       }
     }
 
     @media (max-width: 480px) {
       .container {
-        margin: 50px 12px 16px;
-        padding: 16px;
+        margin: 3.5rem 0.75rem 0.75rem;
+        padding: 1.25rem;
       }
 
       h1 {
-        font-size: 18px;
-        margin-bottom: 20px;
+        font-size: 1.125rem;
+        margin-bottom: 1.5rem;
       }
 
       .form-group {
-        margin-bottom: 16px;
+        margin-bottom: 1.25rem;
       }
 
       label {
-        font-size: 13px;
+        font-size: 0.75rem;
       }
 
       input, select {
-        padding: 8px;
-        font-size: 13px;
+        padding: 0.5rem 0.75rem;
+        font-size: 0.75rem;
       }
     }
   `;

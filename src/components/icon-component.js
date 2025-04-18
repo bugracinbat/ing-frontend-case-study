@@ -66,8 +66,24 @@ class IconComponent extends LitElement {
         <path d="M19 12H5M12 19l-7-7 7-7"/>
       </svg>`,
       add: html`<svg width=${this.size} height=${this.size} viewBox="0 0 24 24" fill="none" stroke=${this.color} stroke-width="2">
-      <path d="M12 4v16m8-8H4"/>
-    </svg>`
+        <path d="M12 4v16m8-8H4"/>
+      </svg>`,
+      search: html`<svg width=${this.size} height=${this.size} viewBox="0 0 24 24" fill="none" stroke=${this.color} stroke-width="2">
+        <circle cx="11" cy="11" r="8"/>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>`,
+      'arrow-up': html`
+        <svg width=${this.size} height=${this.size} viewBox="0 0 24 24" fill="none" stroke=${this.color} stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="19" x2="12" y2="5"></line>
+          <polyline points="5 12 12 5 19 12"></polyline>
+        </svg>
+      `,
+      'arrow-down': html`
+        <svg width=${this.size} height=${this.size} viewBox="0 0 24 24" fill="none" stroke=${this.color} stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="5" x2="12" y2="19"></line>
+          <polyline points="19 12 12 19 5 12"></polyline>
+        </svg>
+      `
     };
 
     return icons[this.name] || html`<span>Icon not found</span>`;

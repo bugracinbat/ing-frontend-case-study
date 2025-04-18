@@ -26,59 +26,67 @@ class ConfirmDialog extends LitElement {
     }
 
     .dialog {
-      background: white;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      background: var(--surface);
+      padding: 1.5rem;
+      border-radius: 0.5rem;
+      box-shadow: var(--shadow-lg);
       width: 400px;
       max-width: 90%;
+      border: 1px solid var(--border-color);
     }
 
     .dialog-title {
-      font-size: 18px;
-      font-weight: bold;
-      margin-bottom: 16px;
-      padding: 12px;
-      background: #ff6200;
+      font-size: 1.125rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      padding: 0.75rem 1rem;
+      background: var(--primary-color);
       color: white;
-      border-radius: 4px;
+      border-radius: 0.375rem;
     }
 
     .dialog-message {
-      margin-bottom: 24px;
+      margin-bottom: 1.5rem;
       line-height: 1.5;
+      color: var(--text-secondary);
+      font-size: 0.875rem;
     }
 
     .dialog-actions {
       display: flex;
       justify-content: flex-end;
-      gap: 12px;
+      gap: 0.75rem;
     }
 
     .dialog-button {
-      padding: 8px 16px;
+      padding: 0.5rem 1rem;
       border: none;
-      border-radius: 4px;
+      border-radius: 0.375rem;
       cursor: pointer;
       font-weight: 500;
+      font-size: 0.875rem;
+      transition: all 0.2s ease;
     }
 
     .confirm-button {
-      background: #ff6200;
+      background: var(--primary-color);
       color: white;
     }
 
     .cancel-button {
-      background: #f5f5f5;
-      color: #333;
+      background: var(--background);
+      color: var(--text-secondary);
+      border: 1px solid var(--border-color);
     }
 
     .confirm-button:hover {
-      background: #e55a00;
+      background: var(--primary-hover);
     }
 
     .cancel-button:hover {
-      background: #e0e0e0;
+      background: var(--surface);
+      border-color: var(--primary-color);
+      color: var(--primary-color);
     }
 
     [hidden] {

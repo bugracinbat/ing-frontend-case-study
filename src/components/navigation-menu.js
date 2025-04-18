@@ -13,9 +13,10 @@ class NavigationMenu extends LitElement {
 
   static styles = css`
     nav { 
-      padding: 10px 20px; 
-      background: #fff; 
-      box-shadow: 0 4px 6px #ddd;
+      padding: 0 1.5rem;
+      height: 64px;
+      background: var(--surface);
+      box-shadow: var(--shadow-sm);
       display: flex;
       justify-content: flex-end;
       align-items: center;
@@ -24,77 +25,95 @@ class NavigationMenu extends LitElement {
       left: 0;
       right: 0;
       z-index: 1000;
+      border-bottom: 1px solid var(--border-color);
     }
+
     .nav-links {
       display: flex;
       margin-left: auto;
+      gap: 1rem;
     }
+
     a { 
       display: flex;
-      margin-left: 20px; 
-      color: #ff6200; 
-      text-decoration: none; 
-      cursor: pointer; 
+      align-items: center;
+      color: var(--text-secondary);
+      text-decoration: none;
       font-weight: 500;
-      padding: 8px 12px;
-      border-radius: 4px;
+      padding: 0.5rem 1rem;
+      border-radius: 0.375rem;
       transition: all 0.2s ease;
+      font-size: 0.875rem;
+      cursor: pointer;
     }
+
     a:hover {
+      color: var(--primary-color);
+      background: rgba(255, 98, 0, 0.05);
+    }
+
+    a.active {
+      color: var(--primary-color);
       background: rgba(255, 98, 0, 0.1);
     }
-    a.active {
-      background: #ff6200;
-      color: white;
-    }
+
     .language-toggle {
       display: flex;
       align-items: center;
-      gap: 8px;
-      margin-left: 20px;
+      gap: 0.5rem;
+      margin-left: 1.5rem;
     }
+
     .language-button {
-      padding: 4px 8px;
-      border: 1px solid #ff6200;
-      border-radius: 4px;
+      padding: 0.375rem 0.75rem;
+      border: 1px solid var(--border-color);
+      border-radius: 0.375rem;
       background: transparent;
-      color: #ff6200;
+      color: var(--text-secondary);
       cursor: pointer;
-      font-size: 14px;
+      font-size: 0.875rem;
+      transition: all 0.2s ease;
     }
+
+    .language-button:hover {
+      border-color: var(--primary-color);
+      color: var(--primary-color);
+    }
+
     .language-button.active {
-      background: #ff6200;
+      background: var(--primary-color);
       color: white;
+      border-color: var(--primary-color);
     }
 
     .hamburger {
       display: none;
       flex-direction: column;
       justify-content: space-between;
-      width: 30px;
-      height: 21px;
+      width: 24px;
+      height: 24px;
       cursor: pointer;
       margin-right: auto;
     }
 
     .hamburger span {
       display: block;
-      height: 3px;
+      height: 2px;
       width: 100%;
-      background-color: #ff6200;
-      border-radius: 3px;
+      background-color: var(--text-secondary);
+      border-radius: 2px;
       transition: all 0.3s ease;
     }
 
     .mobile-menu {
       display: none;
       position: fixed;
-      top: 60px;
+      top: 64px;
       left: 0;
       right: 0;
-      background: white;
-      padding: 20px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      background: var(--surface);
+      padding: 1.5rem;
+      box-shadow: var(--shadow-md);
       z-index: 999;
     }
 
@@ -104,14 +123,14 @@ class NavigationMenu extends LitElement {
 
     .mobile-menu a {
       display: block;
-      margin: 10px 0;
-      padding: 10px;
-      text-align: center;
+      margin: 0.5rem 0;
+      padding: 0.75rem;
+      text-align: left;
     }
 
     @media (max-width: 768px) {
       nav {
-        padding: 10px;
+        padding: 0 1rem;
       }
       .nav-links {
         display: none;
