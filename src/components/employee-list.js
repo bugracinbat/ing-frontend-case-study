@@ -17,19 +17,28 @@ class EmployeeList extends LitElement {
       currentLanguage: { type: String },
       viewMode: { type: String },
       sortColumn: { type: String },
-      sortDirection: { type: String }
+      sortDirection: { type: String },
+      selectedEmployees: { type: Array }
     };
   }
 
   static styles = css`
     .container {
-      max-width: 1200px;
+      max-width: 1600px;
       margin: 5rem auto 2rem;
       padding: 1.5rem;
       background-color: var(--surface);
       box-shadow: var(--shadow-md);
       border-radius: 0.5rem;
       border: 1px solid var(--border-color);
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .content-wrapper {
+      width: 100%;
+      overflow-x: auto;
+      box-sizing: border-box;
     }
 
     .header {
@@ -49,19 +58,21 @@ class EmployeeList extends LitElement {
     }
 
     .search-container {
-      flex: 1;
       width: 100%;
       position: relative;
+      margin-bottom: 1rem;
+      box-sizing: border-box;
     }
 
     .search-input {
-      padding: 0.75rem 1rem 0.75rem 2.5rem;
       width: 100%;
+      padding: 0.75rem 1rem 0.75rem 2.5rem;
       border: 1px solid var(--border-color);
       border-radius: 0.375rem;
       font-size: 0.875rem;
       transition: all 0.2s ease;
       background: var(--surface);
+      box-sizing: border-box;
     }
 
     .search-input:focus {
@@ -118,12 +129,14 @@ class EmployeeList extends LitElement {
       border-radius: 0.375rem;
       border: 1px solid var(--border-color);
       background: var(--surface);
+      box-sizing: border-box;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
-      min-width: 800px;
+      min-width: 1200px;
+      box-sizing: border-box;
     }
 
     th, td {
@@ -266,10 +279,71 @@ class EmployeeList extends LitElement {
       font-size: 0.875rem;
     }
 
+    .checkbox-cell {
+      width: 40px;
+      text-align: center;
+    }
+
+    .bulk-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1rem;
+      padding: 0.75rem 1rem;
+      background-color: var(--background);
+      border-radius: 0.375rem;
+      border: 1px solid var(--border-color);
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .bulk-actions.hidden {
+      display: none;
+    }
+
+    .select-all-checkbox {
+      margin-right: 0.5rem;
+    }
+
+    .bulk-delete-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 0.375rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: 0.875rem;
+    }
+
+    .bulk-delete-button:hover {
+      background-color: var(--primary-hover);
+    }
+
+    .bulk-delete-button:disabled {
+      background-color: var(--text-disabled);
+      cursor: not-allowed;
+    }
+
+    .selected-count {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
     @media (max-width: 768px) {
       .container {
         padding: 1rem;
         margin: 4rem 1rem 1rem;
+      }
+
+      .content-wrapper {
+        margin: 0;
+        padding: 0;
       }
 
       .header {
@@ -321,6 +395,7 @@ class EmployeeList extends LitElement {
     this.viewMode = 'table';
     this.sortColumn = 'firstName';
     this.sortDirection = 'asc';
+    this.selectedEmployees = [];
 
     this.updateViewMode();
 
@@ -461,6 +536,42 @@ class EmployeeList extends LitElement {
     this.viewMode = mode;
   }
 
+  handleSelectAll(e) {
+    const isChecked = e.target.checked;
+    if (isChecked) {
+      this.selectedEmployees = [...this.paginatedEmployees.map(emp => emp.id)];
+    } else {
+      this.selectedEmployees = [];
+    }
+  }
+
+  handleSelectEmployee(e, employeeId) {
+    const isChecked = e.target.checked;
+    if (isChecked) {
+      this.selectedEmployees = [...this.selectedEmployees, employeeId];
+    } else {
+      this.selectedEmployees = this.selectedEmployees.filter(id => id !== employeeId);
+    }
+  }
+
+  handleBulkDelete() {
+    if (this.selectedEmployees.length === 0) return;
+
+    this.shadowRoot.querySelector('confirm-dialog').open({
+      title: LocalizationService.getTranslation('dialog.title'),
+      message: `${LocalizationService.getTranslation('dialog.message')} ${this.selectedEmployees.length} ${LocalizationService.getTranslation('dialog.employees')}`,
+      onConfirm: () => {
+        this.selectedEmployees.forEach(id => {
+          store.dispatch(deleteEmployee(id));
+        });
+        this.selectedEmployees = [];
+        if (this.currentPage > this.totalPages) {
+          this.currentPage = this.totalPages || 1;
+        }
+      },
+    });
+  }
+
   renderTableView() {
     if (this.filteredEmployees.length === 0) {
       return html`
@@ -475,6 +586,14 @@ class EmployeeList extends LitElement {
         <table>
           <thead>
             <tr>
+              <th class="checkbox-cell">
+                <input 
+                  type="checkbox" 
+                  class="select-all-checkbox"
+                  @change=${this.handleSelectAll}
+                  ?checked=${this.selectedEmployees.length === this.paginatedEmployees.length && this.paginatedEmployees.length > 0}
+                />
+              </th>
               <th class="sortable" @click=${() => this.handleSort('firstName')}>
                 ${LocalizationService.getTranslation('employeeList.firstName')}
                 ${this.renderSortIcon('firstName')}
@@ -513,6 +632,13 @@ class EmployeeList extends LitElement {
           <tbody>
             ${this.paginatedEmployees.map(employee => html`
               <tr>
+                <td class="checkbox-cell">
+                  <input 
+                    type="checkbox" 
+                    @change=${(e) => this.handleSelectEmployee(e, employee.id)}
+                    ?checked=${this.selectedEmployees.includes(employee.id)}
+                  />
+                </td>
                 <td>${employee.firstName}</td>
                 <td>${employee.lastName}</td>
                 <td>${employee.dateOfEmployment}</td>
@@ -621,19 +747,36 @@ class EmployeeList extends LitElement {
           </div>
         </div>
 
-        <div class="search-container">
-          <input 
-            type="text" 
-            placeholder=${LocalizationService.getTranslation('employeeList.searchPlaceholder')} 
-            @input=${this.handleSearch} 
-            class="search-input"
-          />
-          <span class="search-icon">
-            <icon-component name="search"></icon-component>
-          </span>
-        </div>
+        <div class="content-wrapper">
+          <div class="search-container">
+            <input 
+              type="text" 
+              placeholder=${LocalizationService.getTranslation('employeeList.searchPlaceholder')} 
+              @input=${this.handleSearch} 
+              class="search-input"
+            />
+            <span class="search-icon">
+              <icon-component name="search"></icon-component>
+            </span>
+          </div>
 
-        ${this.viewMode === 'table' ? this.renderTableView() : this.renderListView()}
+          ${this.viewMode === 'table' ? html`
+            <div class="bulk-actions ${this.selectedEmployees.length === 0 ? 'hidden' : ''}">
+              <span class="selected-count">
+                ${this.selectedEmployees.length} ${LocalizationService.getTranslation('employeeList.selected')}
+              </span>
+              <button 
+                class="bulk-delete-button" 
+                @click=${this.handleBulkDelete}
+                ?disabled=${this.selectedEmployees.length === 0}
+              >
+                <icon-component name="delete" size="16"></icon-component>
+                ${LocalizationService.getTranslation('employeeList.delete')}
+              </button>
+            </div>
+            ${this.renderTableView()}
+          ` : this.renderListView()}
+        </div>
 
         ${this.filteredEmployees.length > 0 ? html`
           <pagination-component

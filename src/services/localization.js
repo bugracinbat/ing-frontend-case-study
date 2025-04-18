@@ -16,7 +16,8 @@ const translations = {
       edit: 'Edit',
       delete: 'Delete',
       tableView: 'Table View',
-      listView: 'List View'
+      listView: 'List View',
+      selected: 'Selected'
     },
     employeeForm: {
       addTitle: 'Add Employee',
@@ -61,7 +62,12 @@ const translations = {
       willBeDeleted: 'will be deleted',
       cancel: 'Cancel',
       proceed: 'Proceed'
-    }
+    },
+    'employeeList.selected': 'selected',
+    'employeeList.deleteSelected': 'Delete Selected',
+    'dialog.bulkDeleteTitle': 'Delete Selected Employees',
+    'dialog.bulkDeleteMessage': 'Are you sure you want to delete',
+    'dialog.employees': 'employees?'
   },
   tr: {
     employeeList: {
@@ -80,7 +86,8 @@ const translations = {
       edit: 'Düzenle',
       delete: 'Sil',
       tableView: 'Tablo Görünümü',
-      listView: 'Liste Görünümü'
+      listView: 'Liste Görünümü',
+      selected: 'Seçildi'
     },
     employeeForm: {
       addTitle: 'Çalışan Ekle',
@@ -125,7 +132,12 @@ const translations = {
       willBeDeleted: 'silinecektir',
       cancel: 'İptal',
       proceed: 'Devam Et'
-    }
+    },
+    'employeeList.selected': 'seçildi',
+    'employeeList.deleteSelected': 'Seçilenleri Sil',
+    'dialog.bulkDeleteTitle': 'Seçili Çalışanları Sil',
+    'dialog.bulkDeleteMessage': 'Seçili',
+    'dialog.employees': 'çalışanı silmek istediğinizden emin misiniz?'
   }
 };
 
@@ -159,5 +171,9 @@ export class LocalizationService {
 
   static getAvailableLanguages() {
     return Object.keys(translations);
+  }
+
+  static getTranslations() {
+    return translations;
   }
 } 
