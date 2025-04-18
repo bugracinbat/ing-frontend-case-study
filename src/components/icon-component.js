@@ -64,7 +64,10 @@ class IconComponent extends LitElement {
       </svg>`,
       back: html`<svg width=${this.size} height=${this.size} viewBox="0 0 24 24" fill="none" stroke=${this.color} stroke-width="2">
         <path d="M19 12H5M12 19l-7-7 7-7"/>
-      </svg>`
+      </svg>`,
+      add: html`<svg width=${this.size} height=${this.size} viewBox="0 0 24 24" fill="none" stroke=${this.color} stroke-width="2">
+      <path d="M12 4v16m8-8H4"/>
+    </svg>`
     };
 
     return icons[this.name] || html`<span>Icon not found</span>`;

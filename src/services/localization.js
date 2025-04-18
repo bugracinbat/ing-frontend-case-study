@@ -8,7 +8,7 @@ const translations = {
       lastName: 'Last Name',
       dateOfEmployment: 'Date of Employment',
       dateOfBirth: 'Date of Birth',
-      phoneNumber: 'Phone Number',
+      phoneNumber: 'Phone',
       email: 'Email',
       department: 'Department',
       position: 'Position',
@@ -26,7 +26,7 @@ const translations = {
       lastName: 'Last Name',
       dateOfEmployment: 'Date of Employment',
       dateOfBirth: 'Date of Birth',
-      phoneNumber: 'Phone Number',
+      phoneNumber: 'Phone',
       email: 'Email Address',
       department: 'Department',
       position: 'Position',
@@ -47,7 +47,7 @@ const translations = {
     },
     navigation: {
       list: 'Employee List',
-      add: 'Add Employee'
+      add: 'Add New'
     },
     pagination: {
       previous: 'Previous',
@@ -72,7 +72,7 @@ const translations = {
       lastName: 'Soyad',
       dateOfEmployment: 'İşe Başlama Tarihi',
       dateOfBirth: 'Doğum Tarihi',
-      phoneNumber: 'Telefon Numarası',
+      phoneNumber: 'Telefon',
       email: 'E-posta',
       department: 'Departman',
       position: 'Pozisyon',
@@ -90,7 +90,7 @@ const translations = {
       lastName: 'Soyad',
       dateOfEmployment: 'İşe Başlama Tarihi',
       dateOfBirth: 'Doğum Tarihi',
-      phoneNumber: 'Telefon Numarası',
+      phoneNumber: 'Telefon',
       email: 'E-posta Adresi',
       department: 'Departman',
       position: 'Pozisyon',
@@ -111,7 +111,7 @@ const translations = {
     },
     navigation: {
       list: 'Çalışan Listesi',
-      add: 'Çalışan Ekle'
+      add: 'Yeni Ekle'
     },
     pagination: {
       previous: 'Önceki',

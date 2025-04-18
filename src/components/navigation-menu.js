@@ -30,6 +30,7 @@ class NavigationMenu extends LitElement {
       margin-left: auto;
     }
     a { 
+      display: flex;
       margin-left: 20px; 
       color: #ff6200; 
       text-decoration: none; 
@@ -194,6 +195,7 @@ class NavigationMenu extends LitElement {
             @click=${() => Router.go('/add')}
             class=${this.isActive('/add') ? 'active' : ''}
           >
+            <icon-component name="add" size="20"></icon-component>
             ${LocalizationService.getTranslation('navigation.add')}
           </a>
         </div>

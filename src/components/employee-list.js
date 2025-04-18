@@ -5,6 +5,7 @@ import './confirm-dialog.js';
 import './pagination-component.js';
 import { LocalizationService } from '../services/localization.js';
 import './icon-component.js';
+import { Router } from '@vaadin/router';
 
 class EmployeeList extends LitElement {
   static get properties() {
@@ -95,8 +96,8 @@ class EmployeeList extends LitElement {
 
     th, td {
       padding: 12px;
-      border: 1px solid #ddd;
-      text-align: left;
+      border-bottom: 1px solid #ddd;
+      text-align: center;
       white-space: nowrap;
     }
 
@@ -106,6 +107,10 @@ class EmployeeList extends LitElement {
       font-weight: bold;
       position: sticky;
       top: 0;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
     }
 
     /* List View Styles */
@@ -286,6 +291,10 @@ class EmployeeList extends LitElement {
     return this.filteredEmployees.slice(start, start + this.employeesPerPage);
   }
 
+  handleEdit(id) {
+    Router.go(`/edit/${id}`);
+  }
+
   handleDelete(id) {
     const employee = this.employees.find(emp => emp.id === id);
     this.shadowRoot.querySelector('confirm-dialog').open({
@@ -314,6 +323,20 @@ class EmployeeList extends LitElement {
   }
 
   renderTableView() {
+    if (!this.employees || this.employees.length === 0) {
+      return html`
+        <table>
+          <tbody>
+            <tr>
+              <td colspan="6" style="text-align: center;">
+                No records found
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      `;
+    }
+
     return html`
       <div class="table-container">
         <table>
@@ -321,43 +344,36 @@ class EmployeeList extends LitElement {
             <tr>
               <th>${LocalizationService.getTranslation('employeeList.firstName')}</th>
               <th>${LocalizationService.getTranslation('employeeList.lastName')}</th>
-              <th>${LocalizationService.getTranslation('employeeList.email')}</th>
               <th>${LocalizationService.getTranslation('employeeList.dateOfEmployment')}</th>
               <th>${LocalizationService.getTranslation('employeeList.dateOfBirth')}</th>
               <th>${LocalizationService.getTranslation('employeeList.phoneNumber')}</th>
+              <th>${LocalizationService.getTranslation('employeeList.email')}</th>
               <th>${LocalizationService.getTranslation('employeeList.department')}</th>
               <th>${LocalizationService.getTranslation('employeeList.position')}</th>
               <th>${LocalizationService.getTranslation('employeeList.actions')}</th>
             </tr>
           </thead>
           <tbody>
-            ${this.paginatedEmployees.map(emp => html`
+            ${this.paginatedEmployees.map(employee => html`
               <tr>
-                <td>${emp.firstName}</td>
-                <td>${emp.lastName}</td>
-                <td>${emp.email}</td>
-                <td>${emp.dateOfEmployment}</td>
-                <td>${emp.dateOfBirth}</td>
-                <td>${emp.phoneNumber}</td>
-                <td>${emp.department}</td>
-                <td>${emp.position}</td>
-                <td>
-                  <div class="actions">
-                    <a href="/edit/${emp.id}" class="action-button edit-button">
-                      <icon-component name="edit" size="20"></icon-component>
-                    </a>
-                    <button class="action-button delete-button" @click=${() => this.handleDelete(emp.id)}>
-                      <icon-component name="delete" size="20"></icon-component>
-                    </button>
-                  </div>
+                <td>${employee.firstName}</td>
+                <td>${employee.lastName}</td>
+                <td>${employee.dateOfEmployment}</td>
+                <td>${employee.dateOfBirth}</td>
+                <td>${employee.phoneNumber}</td>
+                <td>${employee.email}</td>
+                <td>${employee.department}</td>
+                <td>${employee.position}</td>
+                <td class="actions">
+                  <button class="action-button edit-button" @click=${() => this.handleEdit(employee.id)}>
+                    <icon-component name="edit"></icon-component>
+                  </button>
+                  <button class="action-button delete-button" @click=${() => this.handleDelete(employee.id)}>
+                    <icon-component name="delete"></icon-component>
+                  </button>
                 </td>
               </tr>
             `)}
-            ${this.paginatedEmployees.length === 0 ? html`
-              <tr>
-                <td colspan="9">${LocalizationService.getTranslation('employeeList.noRecords')}</td>
-              </tr>
-            ` : ''}
           </tbody>
         </table>
       </div>
@@ -405,9 +421,9 @@ class EmployeeList extends LitElement {
               </div>
             </div>
             <div class="actions">
-              <a href="/edit/${emp.id}" class="action-button edit-button">
+              <button class="action-button edit-button" @click=${() => this.handleEdit(emp.id)}>
                 <icon-component name="edit" size="20"></icon-component>
-              </a>
+              </button>
               <button class="action-button delete-button" @click=${() => this.handleDelete(emp.id)}>
                 <icon-component name="delete" size="20"></icon-component>
               </button>
