@@ -4,6 +4,7 @@ import { addEmployee, editEmployee } from '../state/store.js';
 import { v4 as uuidv4 } from 'uuid';
 import { LocalizationService } from '../services/localization.js';
 import { Router } from '@vaadin/router';
+import backArrowIcon from '../icons/back-arrow-icon.svg';
 
 class EmployeeForm extends LitElement {
   static get properties() {
@@ -238,9 +239,7 @@ class EmployeeForm extends LitElement {
     return html`
       <div class="container">
         <a href="/" class="back-button">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M19 12H5M12 19l-7-7 7-7"/>
-          </svg>
+          <img src=${backArrowIcon} alt="Back" width="16" height="16" />
           ${LocalizationService.getTranslation('employeeForm.back')}
         </a>
         <h1>${this.isEditMode 
