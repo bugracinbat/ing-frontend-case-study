@@ -1,6 +1,6 @@
 import { LitElement, html, css } from 'lit-element';
 import { store } from '../state/store.js';
-import { deleteEmployee } from '../state/store.js';
+import { deleteEmployee, editEmployee } from '../state/store.js';
 import './confirm-dialog.js';
 import './pagination-component.js';
 import { LocalizationService } from '../services/localization.js';
@@ -18,7 +18,8 @@ class EmployeeList extends LitElement {
       viewMode: { type: String },
       sortColumn: { type: String },
       sortDirection: { type: String },
-      selectedEmployees: { type: Array }
+      selectedEmployees: { type: Array },
+      editingEmployee: { type: Object }
     };
   }
 
@@ -145,6 +146,8 @@ class EmployeeList extends LitElement {
       text-align: center;
       white-space: nowrap;
       font-size: 0.875rem;
+      vertical-align: middle;
+      height: 48px;
     }
 
     th {
@@ -233,6 +236,8 @@ class EmployeeList extends LitElement {
       gap: 0.75rem;
       justify-content: center;
       align-items: center;
+      min-width: 120px;
+      transform: translateY(-1px);
     }
 
     .action-button {
@@ -246,6 +251,9 @@ class EmployeeList extends LitElement {
       justify-content: center;
       border-radius: 0.375rem;
       transition: all 0.2s ease;
+      min-width: 32px;
+      height: 32px;
+      transform: translateY(-1px);
     }
 
     .action-button:hover {
@@ -383,6 +391,80 @@ class EmployeeList extends LitElement {
         margin-bottom: 0.25rem;
       }
     }
+
+    .editable-cell {
+      position: relative;
+      padding-right: 2rem;
+    }
+
+    .editable-cell:hover .edit-icon {
+      opacity: 1;
+    }
+
+    .edit-icon {
+      position: absolute;
+      right: 0.5rem;
+      top: 50%;
+      transform: translateY(-50%);
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      cursor: pointer;
+      color: var(--primary-color);
+      padding: 0.25rem;
+      border-radius: 0.25rem;
+    }
+
+    .edit-icon:hover {
+      opacity: 1;
+      background: var(--background);
+    }
+
+    .edit-input {
+      width: 100%;
+      padding: 0.5rem;
+      border: 1px solid var(--border-color);
+      border-radius: 0.375rem;
+      font-size: 0.875rem;
+      background: var(--surface);
+    }
+
+    .edit-input:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 2px rgba(255, 98, 0, 0.1);
+    }
+
+    .edit-actions {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: center;
+      align-items: center;
+      min-width: 120px;
+      transform: translateY(-1px);
+    }
+
+    .edit-button {
+      padding: 0.5rem 0.75rem;
+      border: none;
+      border-radius: 0.375rem;
+      cursor: pointer;
+      font-size: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      white-space: nowrap;
+      transform: translateY(-1px);
+    }
+
+    .save-button {
+      background-color: var(--primary-color);
+      color: white;
+    }
+
+    .cancel-button {
+      background-color: var(--background);
+      color: var(--text-secondary);
+    }
   `;
 
   constructor() {
@@ -396,6 +478,7 @@ class EmployeeList extends LitElement {
     this.sortColumn = 'firstName';
     this.sortDirection = 'asc';
     this.selectedEmployees = [];
+    this.editingEmployee = null;
 
     this.updateViewMode();
 
@@ -572,6 +655,82 @@ class EmployeeList extends LitElement {
     });
   }
 
+  handleEditClick(employee) {
+    this.editingEmployee = { ...employee };
+  }
+
+  handleEditCancel() {
+    this.editingEmployee = null;
+  }
+
+  handleEditSave() {
+    if (this.editingEmployee) {
+      store.dispatch(editEmployee(this.editingEmployee));
+      this.editingEmployee = null;
+    }
+  }
+
+  handleEditInput(field, value) {
+    if (this.editingEmployee) {
+      this.editingEmployee = {
+        ...this.editingEmployee,
+        [field]: value
+      };
+    }
+  }
+
+  renderEditableCell(employee, field) {
+    if (this.editingEmployee?.id === employee.id) {
+      return html`
+        <input
+          class="edit-input"
+          type="text"
+          .value=${this.editingEmployee[field]}
+          @input=${(e) => this.handleEditInput(field, e.target.value)}
+        />
+      `;
+    }
+
+    return html`
+      <div class="editable-cell">
+        ${employee[field]}
+        <span class="edit-icon" @click=${() => this.handleEditClick(employee)}>
+          <icon-component name="edit" size="14"></icon-component>
+        </span>
+      </div>
+    `;
+  }
+
+  renderActionsCell(employee) {
+    if (this.editingEmployee?.id === employee.id) {
+      return html`
+        <td class="actions">
+          <div class="edit-actions">
+            <button class="edit-button save-button" @click=${this.handleEditSave}>
+              <icon-component name="check" size="14"></icon-component>
+              ${LocalizationService.getTranslation('employeeList.save')}
+            </button>
+            <button class="edit-button cancel-button" @click=${this.handleEditCancel}>
+              <icon-component name="x" size="14"></icon-component>
+              ${LocalizationService.getTranslation('employeeList.cancel')}
+            </button>
+          </div>
+        </td>
+      `;
+    }
+
+    return html`
+      <td class="actions">
+        <button class="action-button edit-button" @click=${() => this.handleEditClick(employee)}>
+          <icon-component name="edit"></icon-component>
+        </button>
+        <button class="action-button delete-button" @click=${() => this.handleDelete(employee.id)}>
+          <icon-component name="delete"></icon-component>
+        </button>
+      </td>
+    `;
+  }
+
   renderTableView() {
     if (this.filteredEmployees.length === 0) {
       return html`
@@ -639,22 +798,15 @@ class EmployeeList extends LitElement {
                     ?checked=${this.selectedEmployees.includes(employee.id)}
                   />
                 </td>
-                <td>${employee.firstName}</td>
-                <td>${employee.lastName}</td>
-                <td>${employee.dateOfEmployment}</td>
-                <td>${employee.dateOfBirth}</td>
-                <td>${employee.phoneNumber}</td>
-                <td>${employee.email}</td>
-                <td>${employee.department}</td>
-                <td>${employee.position}</td>
-                <td class="actions">
-                  <button class="action-button edit-button" @click=${() => this.handleEdit(employee.id)}>
-                    <icon-component name="edit"></icon-component>
-                  </button>
-                  <button class="action-button delete-button" @click=${() => this.handleDelete(employee.id)}>
-                    <icon-component name="delete"></icon-component>
-                  </button>
-                </td>
+                <td>${this.renderEditableCell(employee, 'firstName')}</td>
+                <td>${this.renderEditableCell(employee, 'lastName')}</td>
+                <td>${this.renderEditableCell(employee, 'dateOfEmployment')}</td>
+                <td>${this.renderEditableCell(employee, 'dateOfBirth')}</td>
+                <td>${this.renderEditableCell(employee, 'phoneNumber')}</td>
+                <td>${this.renderEditableCell(employee, 'email')}</td>
+                <td>${this.renderEditableCell(employee, 'department')}</td>
+                <td>${this.renderEditableCell(employee, 'position')}</td>
+                ${this.renderActionsCell(employee)}
               </tr>
             `)}
           </tbody>

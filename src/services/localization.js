@@ -17,7 +17,9 @@ const translations = {
       delete: 'Delete',
       tableView: 'Table View',
       listView: 'List View',
-      selected: 'Selected'
+      selected: 'Selected',
+      save: 'Save',
+      cancel: 'Cancel'
     },
     employeeForm: {
       addTitle: 'Add Employee',
@@ -61,7 +63,8 @@ const translations = {
       message: 'Selected Employee record of',
       willBeDeleted: 'will be deleted',
       cancel: 'Cancel',
-      proceed: 'Proceed'
+      proceed: 'Proceed',
+      employees: 'employees?'
     },
     'employeeList.selected': 'selected',
     'employeeList.deleteSelected': 'Delete Selected',
@@ -87,7 +90,9 @@ const translations = {
       delete: 'Sil',
       tableView: 'Tablo Görünümü',
       listView: 'Liste Görünümü',
-      selected: 'Seçildi'
+      selected: 'Seçildi',
+      save: 'Kaydet',
+      cancel: 'İptal'
     },
     employeeForm: {
       addTitle: 'Çalışan Ekle',
@@ -131,7 +136,8 @@ const translations = {
       message: 'Seçilen çalışan kaydı',
       willBeDeleted: 'silinecektir',
       cancel: 'İptal',
-      proceed: 'Devam Et'
+      proceed: 'Devam Et',
+      employees: 'silinecek'
     },
     'employeeList.selected': 'seçildi',
     'employeeList.deleteSelected': 'Seçilenleri Sil',
